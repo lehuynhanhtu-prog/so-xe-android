@@ -98,3 +98,4 @@ button{cursor:pointer}
 .nav button::first-letter{font-size:21px}
 .metric strong{font-size:22px}
 }
+.reminder .maintenance-next{margin-top:5px;color:var(--ink);font-weight:650}
