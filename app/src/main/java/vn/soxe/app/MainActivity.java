@@ -16,7 +16,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams;
 import androidx.browser.customtabs.CustomTabsIntent;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://quan-ly-chi-phi-xe.fluffy-hill-7538.chatgpt.site";
+    private static final String APP_URL = "https://lehuynhanhtu-prog.github.io/so-xe-android/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
