@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=6">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -65,15 +65,25 @@
 </article>
 </div>
 <article class="card" style="margin-top:16px">
+<div class="recent-head">
+<div>
 <h2>Giao dịch gần đây</h2>
+<small>Nhấn vào một dòng để xem chi tiết</small>
+</div>
+<label class="recent-sort">Sắp xếp
+<select id="recentSort">
+<option value="date">Theo thời gian</option>
+<option value="car">Theo xe</option>
+</select>
+</label>
+</div>
 <div class="tablewrap">
-<table class="table">
+<table class="table recent-table">
 <thead>
 <tr>
 <th>Ngày</th>
 <th>Xe</th>
 <th>Loại</th>
-<th>Nội dung</th>
 <th>ODO</th>
 <th>Thành tiền</th>
 </tr>
@@ -300,6 +310,20 @@
 </div>
 </form>
 </dialog>
+<dialog class="modal detail-modal" id="expenseDetailModal">
+<form method="dialog">
+<div class="modalhead">
+<h2>Chi tiết giao dịch</h2>
+<button class="btn" value="cancel" aria-label="Đóng">✕</button>
+</div>
+<div class="modalbody">
+<div class="detail-grid" id="expenseDetailBody"></div>
+</div>
+<div class="modalfoot">
+<button class="btn primary" value="cancel">Đóng</button>
+</div>
+</form>
+</dialog>
 <dialog class="modal" id="carModal">
 <form method="dialog" id="carForm">
 <div class="modalhead">
@@ -334,7 +358,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=5">
+<script src="app.js?v=6">
 </script>
 </body>
 </html>
