@@ -114,3 +114,6 @@ button{cursor:pointer}
 .detail-item small{display:block;color:var(--muted);font-size:12px;margin-bottom:3px}
 .detail-item strong{display:block;overflow-wrap:anywhere}
 @media(max-width:560px){.recent-head{align-items:flex-start;flex-direction:column}.recent-sort{width:100%;justify-content:space-between}.recent-sort select{flex:1}.detail-grid{grid-template-columns:1fr}}
+
+.tag.charge{background:#dff3ff;color:#075a82}
+.car-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}

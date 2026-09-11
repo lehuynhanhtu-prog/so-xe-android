@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -110,6 +110,7 @@
 <select id="filterType">
 <option value="">Tất cả loại</option>
 <option value="fuel">Xăng</option>
+<option value="charge">Sạc xe</option>
 <option value="maintenance">Bảo dưỡng</option>
 <option value="other">Khác</option>
 </select>
@@ -153,6 +154,7 @@
 <tr>
 <th>Tháng</th>
 <th>Xăng</th>
+<th>Sạc xe</th>
 <th>Bảo dưỡng</th>
 <th>Khác</th>
 <th>Tổng chi phí</th>
@@ -261,6 +263,7 @@
 <label>Loại chi phí *</label>
 <select id="expenseType">
 <option value="fuel">Đổ xăng</option>
+<option value="charge">Sạc xe</option>
 <option value="maintenance">Bảo dưỡng</option>
 <option value="other">Khác</option>
 </select>
@@ -284,6 +287,17 @@
 <div class="field fuelOnly">
 <label>Số lít</label>
 <input id="fuelLiters" type="number" min="0" step="0.01">
+</div>
+<div class="field chargeOnly" style="display:none">
+<label>Pin trước khi sạc (%) *</label>
+<input id="batteryFrom" type="number" min="0" max="100" step="0.1" placeholder="VD: 20">
+</div>
+<div class="field chargeOnly" style="display:none">
+<label>Pin sau khi sạc (%) *</label>
+<input id="batteryTo" type="number" min="0" max="100" step="0.1" placeholder="VD: 90">
+</div>
+<div class="field full chargeOnly maintenanceHint" style="display:none">
+<small>Nhập mức pin trước và sau khi sạc. Phần trăm sau sạc phải lớn hơn trước sạc.</small>
 </div>
 <div class="field maintenanceOnly" style="display:none">
 <label>Chu kỳ bảo dưỡng (km) *</label>
@@ -326,10 +340,11 @@
 <dialog class="modal" id="carModal">
 <form method="dialog" id="carForm">
 <div class="modalhead">
-<h2>Thêm xe</h2>
+<h2 id="carTitle">Thêm xe</h2>
 <button class="btn" value="cancel">✕</button>
 </div>
 <div class="modalbody">
+<input type="hidden" id="carId">
 <div class="formgrid">
 <div class="field">
 <label>Biển số *</label>
@@ -338,6 +353,13 @@
 <div class="field">
 <label>Tên xe</label>
 <input id="carName" placeholder="VD: Mazda CX-5">
+</div>
+<div class="field">
+<label>Loại xe *</label>
+<select id="carPowerType" required>
+<option value="fuel">Xe xăng/dầu</option>
+<option value="electric">Xe điện</option>
+</select>
 </div>
 <div class="field">
 <label>ODO hiện tại</label>
@@ -357,7 +379,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=7">
+<script src="app.js?v=8">
 </script>
 </body>
 </html>
