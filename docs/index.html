@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -210,13 +210,12 @@
 <br>Dữ liệu được lưu trong tệp <code>so-xe-data.json</code> ở vùng dữ liệu ứng dụng trên Drive của chính anh. Ứng dụng chỉ xin quyền với tệp do nó tạo.</div>
 <div class="formgrid">
 <div class="field full">
-<label>Google OAuth Client ID</label>
-<input id="clientId" placeholder="…apps.googleusercontent.com">
-<small>Tạo loại “Web application” trong Google Cloud Console và thêm địa chỉ app này vào Authorized JavaScript origins.</small>
+<label>Tài khoản Google</label>
+<small>Ứng dụng đã được cấu hình sẵn. Chỉ cần nhấn nút bên dưới và chọn tài khoản Google; không phải nhập OAuth Client ID.</small>
 </div>
 <div class="field full">
 <div class="actions">
-<button class="btn green" id="connectDrive">Kết nối Google Drive</button>
+<button class="btn green" id="connectDrive">Kết nối tài khoản Google</button>
 <button class="btn" id="disconnectDrive">Ngắt kết nối</button>
 </div>
 </div>
@@ -358,7 +357,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=6">
+<script src="app.js?v=7">
 </script>
 </body>
 </html>

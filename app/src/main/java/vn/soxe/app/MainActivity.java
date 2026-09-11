@@ -16,7 +16,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams;
 import androidx.browser.customtabs.CustomTabsIntent;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://lehuynhanhtu-prog.github.io/so-xe-android/";
+    private static final String APP_URL = "https://lehuynhanhtu-prog.github.io/so-xe-android/?v=7";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
