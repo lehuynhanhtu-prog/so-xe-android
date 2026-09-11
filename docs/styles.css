@@ -69,13 +69,31 @@ button{cursor:pointer}
 .mobile-syncbox{display:flex;align-items:flex-end;gap:5px;flex-direction:column}
 .mobile-syncbox span{font-size:11px;color:#68756f;text-align:right;max-width:180px}
 .mobile-syncbox .btn{padding:7px 10px;font-size:12px}
-.app-downloads{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px 18px;margin-bottom:16px;background:linear-gradient(135deg,#fff,#edf7f1)}
-.download-copy h2{margin:0 0 3px}
-.download-copy p{margin:0;color:var(--muted)}
-.download-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
-.download-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.android-install-note,.ios-install-note{grid-column:1/-1;color:var(--muted)}
-.android-install-note a{color:var(--green2);font-weight:700}
+.install-link-card{display:flex;align-items:center;gap:11px;width:max-content;max-width:100%;margin:0 0 16px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 5px 16px rgba(19,55,42,.06)}
+.install-link-card:hover{border-color:#9dbbad;background:#f8fbf9}
+.install-link-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--green);color:#fff;font-size:19px;font-weight:800}
+.install-link-card b,.install-link-card small{display:block}
+.install-link-card small{color:var(--muted);font-size:12px}
+.install-link-arrow{font-size:25px;color:var(--green2);margin-left:8px}
+.download-page{min-height:100vh;background:linear-gradient(145deg,#eef5f0,#f9fbfa)}
+.download-shell{width:min(980px,calc(100% - 28px));margin:auto;padding:34px 0 50px}
+.back-link{display:inline-block;color:var(--green2);font-weight:700;text-decoration:none;margin-bottom:24px}
+.download-hero{display:flex;align-items:center;gap:18px;margin-bottom:25px}
+.download-hero img{width:66px;height:66px}
+.download-hero h1{margin:0;font-size:30px}
+.download-hero p{margin:3px 0 0;color:var(--muted)}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.platform-card{display:flex;flex-direction:column}
+.platform-card h2{font-size:22px;margin:4px 0}
+.platform-card>p{color:var(--muted);margin:0 0 16px}
+.platform-icon{font-size:34px}
+.platform-download{display:block;text-decoration:none;text-align:center;margin-bottom:13px}
+.platform-card ol{padding-left:22px;margin:8px 0 12px}
+.platform-card li{margin:7px 0}
+.download-help{font-size:13px;margin-top:auto!important;padding-top:10px;border-top:1px solid var(--line)}
+.download-help a{color:var(--green2);font-weight:700}
+.download-data-note{margin-top:18px}
+.download-data-note p{color:var(--muted);margin:4px 0 0}
 .settings-note{padding:13px;background:#fff7df;border-left:4px solid var(--gold);border-radius:8px;margin-bottom:16px}
 .carlist{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .car h3{margin:4px 0}
@@ -111,8 +129,8 @@ button{cursor:pointer}
 .metric strong{font-size:22px}
 .mobilebrand b{display:none}
 .mobile-syncbox span{max-width:145px}
-.app-downloads{grid-template-columns:1fr}
-.download-actions{display:grid;grid-template-columns:1fr;justify-content:stretch}
+.platform-grid{grid-template-columns:1fr}
+.download-hero h1{font-size:25px}
 }
 .reminder .maintenance-next{margin-top:5px;color:var(--ink);font-weight:650}
 
