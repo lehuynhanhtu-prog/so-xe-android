@@ -36,6 +36,7 @@ button{cursor:pointer}
 .reminder:last-child{border:0}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:6px;flex:none}
 .dot.red{background:#d55454}
+.dot.green{background:var(--green2)}
 .reminder b{display:block}
 .reminder small{color:var(--muted)}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
@@ -123,6 +124,10 @@ button{cursor:pointer}
 .insurance-reminder:last-child{border:0}
 .insurance-reminder b,.insurance-reminder small{display:block}
 .insurance-reminder small{color:var(--muted);margin-top:3px}
+.section-note{color:var(--muted);font-size:13px;margin:-5px 0 8px}
+.insurance-reminder.warning{background:#fff8e8;border-radius:10px;padding-left:10px;padding-right:10px}
+.insurance-state.warning-text{color:#9a5b00;font-weight:750}
+.insurance-state.valid-text{color:var(--green2);font-weight:650}
 
 .dashboard-metrics{grid-template-columns:repeat(3,1fr)}
 .vehicle-summary-card{margin-top:16px}
