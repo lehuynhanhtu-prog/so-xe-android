@@ -123,3 +123,9 @@ button{cursor:pointer}
 .insurance-reminder:last-child{border:0}
 .insurance-reminder b,.insurance-reminder small{display:block}
 .insurance-reminder small{color:var(--muted);margin-top:3px}
+
+.dashboard-metrics{grid-template-columns:repeat(3,1fr)}
+.vehicle-summary-card{margin-top:16px}
+.vehicle-summary-table{min-width:720px}
+.vehicle-summary-table tfoot td{background:#f3f7f4;border-top:2px solid var(--line)}
+@media(max-width:700px){.dashboard-metrics{grid-template-columns:1fr}}

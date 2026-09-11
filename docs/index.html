@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=11">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -50,8 +50,33 @@
 <button class="btn primary" id="addExpense">+ Ghi chi phí</button>
 </div>
 </header>
-<div class="grid4" id="metrics">
+<div class="grid4 dashboard-metrics" id="metrics">
 </div>
+<article class="card vehicle-summary-card">
+<h2>Chi phí và ODO từng xe trong tháng này</h2>
+<div class="tablewrap">
+<table class="table vehicle-summary-table">
+<thead>
+<tr>
+<th>Biển số</th>
+<th>Tên xe</th>
+<th>Loại xe</th>
+<th>Chi phí tháng này</th>
+<th>ODO hiện tại</th>
+</tr>
+</thead>
+<tbody id="vehicleSummaryRows">
+</tbody>
+<tfoot>
+<tr>
+<td colspan="3"><b>Tổng cộng chi phí các xe</b></td>
+<td><b id="vehicleSummaryTotal">0 đ</b></td>
+<td></td>
+</tr>
+</tfoot>
+</table>
+</div>
+</article>
 <div class="contentgrid">
 <article class="card">
 <h2>Chi phí 6 tháng gần nhất</h2>
@@ -410,7 +435,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=10">
+<script src="app.js?v=11">
 </script>
 </body>
 </html>
