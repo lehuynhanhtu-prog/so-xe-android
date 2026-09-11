@@ -117,3 +117,9 @@ button{cursor:pointer}
 
 .tag.charge{background:#dff3ff;color:#075a82}
 .car-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}
+.tag.insurance{background:#eee7ff;color:#563697}
+.insurance-card{margin-top:16px}
+.insurance-reminder{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}
+.insurance-reminder:last-child{border:0}
+.insurance-reminder b,.insurance-reminder small{display:block}
+.insurance-reminder small{color:var(--muted);margin-top:3px}

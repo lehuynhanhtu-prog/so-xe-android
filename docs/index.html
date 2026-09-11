@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -64,6 +64,11 @@
 </div>
 </article>
 </div>
+<article class="card insurance-card">
+<h2>Bảo hiểm TNDS sắp hết hạn</h2>
+<div id="insuranceReminders">
+</div>
+</article>
 <article class="card" style="margin-top:16px">
 <div class="recent-head">
 <div>
@@ -112,6 +117,7 @@
 <option value="fuel">Xăng</option>
 <option value="charge">Sạc xe</option>
 <option value="maintenance">Bảo dưỡng</option>
+<option value="insurance">Bảo hiểm TNDS</option>
 <option value="other">Khác</option>
 </select>
 </div>
@@ -156,6 +162,7 @@
 <th>Xăng</th>
 <th>Sạc xe</th>
 <th>Bảo dưỡng</th>
+<th>Bảo hiểm TNDS</th>
 <th>Khác</th>
 <th>Tổng chi phí</th>
 <th>L/100 km</th>
@@ -265,6 +272,7 @@
 <option value="fuel">Đổ xăng</option>
 <option value="charge">Sạc xe</option>
 <option value="maintenance">Bảo dưỡng</option>
+<option value="insurance">Bảo hiểm TNDS</option>
 <option value="other">Khác</option>
 </select>
 </div>
@@ -309,6 +317,25 @@
 </div>
 <div class="field full maintenanceOnly maintenanceHint" style="display:none">
 <small>Ứng dụng sẽ nhắc khi ODO đạt chu kỳ hoặc đến ngày bảo dưỡng — điều kiện nào đến trước.</small>
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Đơn vị bảo hiểm</label>
+<input id="insuranceProvider" placeholder="VD: Bảo Việt">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Số giấy chứng nhận</label>
+<input id="insurancePolicy" placeholder="Số hợp đồng/chứng nhận">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Ngày hiệu lực *</label>
+<input id="insuranceStart" type="date">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Ngày hết hạn *</label>
+<input id="insuranceExpiry" type="date">
+</div>
+<div class="field full insuranceOnly maintenanceHint" style="display:none">
+<small>Ứng dụng sẽ cảnh báo trên Tổng quan từ 45 ngày trước ngày hết hạn.</small>
 </div>
 <div class="field full">
 <label>Ghi chú</label>
@@ -379,7 +406,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=8">
+<script src="app.js?v=9">
 </script>
 </body>
 </html>
