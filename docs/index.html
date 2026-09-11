@@ -293,7 +293,7 @@
 <form method="dialog" id="expenseForm">
 <div class="modalhead">
 <h2 id="expenseTitle">Ghi chi phí</h2>
-<button class="btn" value="cancel">✕</button>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
 </div>
 <div class="modalbody">
 <input type="hidden" id="expenseId">
@@ -387,7 +387,7 @@
 </div>
 </div>
 <div class="modalfoot">
-<button class="btn" value="cancel">Hủy</button>
+<button class="btn" type="button" data-close-dialog>Hủy</button>
 <button class="btn primary" value="default" id="saveExpense">Lưu chi phí</button>
 </div>
 </form>
@@ -396,13 +396,13 @@
 <form method="dialog">
 <div class="modalhead">
 <h2>Chi tiết giao dịch</h2>
-<button class="btn" value="cancel" aria-label="Đóng">✕</button>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
 </div>
 <div class="modalbody">
 <div class="detail-grid" id="expenseDetailBody"></div>
 </div>
 <div class="modalfoot">
-<button class="btn primary" value="cancel">Đóng</button>
+<button class="btn primary" type="button" data-close-dialog>Đóng</button>
 </div>
 </form>
 </dialog>
@@ -410,7 +410,7 @@
 <form method="dialog" id="carForm">
 <div class="modalhead">
 <h2 id="carTitle">Thêm xe</h2>
-<button class="btn" value="cancel">✕</button>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
 </div>
 <div class="modalbody">
 <input type="hidden" id="carId">
@@ -442,14 +442,14 @@
 </div>
 </div>
 <div class="modalfoot">
-<button class="btn" value="cancel">Hủy</button>
+<button class="btn" type="button" data-close-dialog>Hủy</button>
 <button class="btn primary" id="saveCar" value="default">Lưu xe</button>
 </div>
 </form>
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=18">
+<script src="app.js?v=19">
 </script>
 </body>
 </html>
