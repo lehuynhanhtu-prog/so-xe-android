@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view v1.3.0 >/dev/null 2>&1; then
-            gh release upload v1.3.0 So-Xe-Android.apk --clobber
+            echo "Release v1.3.0 đã tồn tại; giữ nguyên APK và chữ ký hiện có."
           else
             gh release create v1.3.0 So-Xe-Android.apk --target "$GITHUB_SHA" --title "Sổ Xe Android 1.3.0" --notes "Bản cài đặt Android. Ứng dụng tự nhận các cập nhật mới từ GitHub Pages."
           fi

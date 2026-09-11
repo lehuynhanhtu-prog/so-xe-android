@@ -74,7 +74,8 @@ button{cursor:pointer}
 .download-copy p{margin:0;color:var(--muted)}
 .download-actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
 .download-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.ios-install-note{grid-column:1/-1;color:var(--muted)}
+.android-install-note,.ios-install-note{grid-column:1/-1;color:var(--muted)}
+.android-install-note a{color:var(--green2);font-weight:700}
 .settings-note{padding:13px;background:#fff7df;border-left:4px solid var(--gold);border-radius:8px;margin-bottom:16px}
 .carlist{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .car h3{margin:4px 0}
