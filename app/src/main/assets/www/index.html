@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12372a">
+<title>Sổ Xe — Quản lý chi phí ô tô</title>
+<meta name="description" content="Theo dõi xăng, bảo dưỡng và chi phí sử dụng ô tô">
+<link rel="icon" href="icons/icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+<div class="brand">
+<img src="icons/icon.svg" alt="">
+<div>
+<b>Sổ Xe</b>
+<small>Chi phí ô tô</small>
+</div>
+</div>
+<nav class="nav">
+<button class="active" data-view="dashboard">⌂ Tổng quan</button>
+<button data-view="transactions">▤ Chi phí</button>
+<button data-view="reports">📊 Báo cáo</button>
+<button data-view="cars">🚙 Xe của tôi</button>
+<button data-view="settings">⚙ Cài đặt</button>
+</nav>
+<div class="syncbox">
+<div class="syncstate" id="syncState">● Chưa kết nối Drive</div>
+<button class="btn primary" id="syncBtn">Đồng bộ ngay</button>
+</div>
+</aside>
+<main class="main">
+<div class="mobiletop">
+<div class="mobilebrand">
+<img src="icons/icon.svg" alt="">
+<b>Sổ Xe</b>
+</div>
+<div class="mobile-syncbox">
+<span id="mobileSyncState">● Chưa kết nối Drive</span>
+<button class="btn primary" id="mobileSyncBtn">Đồng bộ ngay</button>
+</div>
+</div>
+<section class="view active" id="dashboard">
+<header class="top">
+<div>
+<h1>Tổng quan chi phí</h1>
+<p id="periodText">Tình hình xe trong tháng này</p>
+</div>
+<div class="actions">
+<button class="btn" id="addCarTop">+ Thêm xe</button>
+<button class="btn primary" id="addExpense">+ Ghi chi phí</button>
+</div>
+</header>
+<div class="grid4 dashboard-metrics" id="metrics">
+</div>
+<article class="card vehicle-summary-card">
+<h2>Chi phí và ODO từng xe trong tháng này</h2>
+<div class="tablewrap">
+<table class="table vehicle-summary-table">
+<thead>
+<tr>
+<th>Biển số</th>
+<th>Tên xe</th>
+<th>Loại xe</th>
+<th>Chi phí tháng này</th>
+<th>ODO hiện tại</th>
+</tr>
+</thead>
+<tbody id="vehicleSummaryRows">
+</tbody>
+<tfoot>
+<tr>
+<td colspan="3"><b>Tổng cộng chi phí các xe</b></td>
+<td><b id="vehicleSummaryTotal">0 đ</b></td>
+<td></td>
+</tr>
+</tfoot>
+</table>
+</div>
+</article>
+<div class="contentgrid">
+<article class="card">
+<h2>Chi phí 6 tháng gần nhất</h2>
+<div class="chart" id="chart">
+</div>
+</article>
+<article class="card">
+<h2>Sắp đến hạn bảo dưỡng</h2>
+<div id="reminders">
+</div>
+</article>
+</div>
+<article class="card insurance-card">
+<h2>Bảo hiểm TNDS của các xe</h2>
+<p class="section-note">Luôn hiển thị bảo hiểm hiện có và cảnh báo nổi bật trong vòng 45 ngày trước khi hết hạn.</p>
+<div id="insuranceReminders">
+</div>
+</article>
+<article class="card" style="margin-top:16px">
+<div class="recent-head">
+<div>
+<h2>Giao dịch gần đây</h2>
+<small>Nhấn vào một dòng để xem chi tiết</small>
+</div>
+<label class="recent-sort">Sắp xếp
+<select id="recentSort">
+<option value="date">Theo thời gian</option>
+<option value="car">Theo xe</option>
+</select>
+</label>
+</div>
+<div class="tablewrap">
+<table class="table recent-table">
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Xe</th>
+<th>Loại</th>
+<th>ODO</th>
+<th>Thành tiền</th>
+</tr>
+</thead>
+<tbody id="recentRows">
+</tbody>
+</table>
+</div>
+</article>
+</section>
+<section class="view" id="transactions">
+<header class="top">
+<div>
+<h1>Sổ chi phí</h1>
+<p>Xăng, bảo dưỡng và các khoản khác</p>
+</div>
+<button class="btn primary" id="addExpense2">+ Ghi chi phí</button>
+</header>
+<article class="card">
+<div class="toolbar">
+<input id="search" placeholder="Tìm nội dung...">
+<select id="filterCar">
+</select>
+<select id="filterType">
+<option value="">Tất cả loại</option>
+<option value="fuel">Xăng</option>
+<option value="charge">Sạc xe</option>
+<option value="maintenance">Bảo dưỡng</option>
+<option value="insurance">Bảo hiểm TNDS</option>
+<option value="other">Khác</option>
+</select>
+</div>
+<div class="tablewrap">
+<table class="table">
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Xe</th>
+<th>Loại</th>
+<th>Nội dung</th>
+<th>ODO</th>
+<th>Số lượng</th>
+<th>Thành tiền</th>
+<th>
+</th>
+</tr>
+</thead>
+<tbody id="allRows">
+</tbody>
+</table>
+</div>
+</article>
+</section>
+<section class="view" id="reports">
+<header class="top">
+<div>
+<h1>Báo cáo</h1>
+<p>Chi phí hàng tháng và mức tiêu hao nhiên liệu</p>
+</div>
+</header>
+<div class="grid4 reportmetrics" id="allTimeFuelMetrics">
+</div>
+<div class="reportgrid">
+<article class="card">
+<h2>Chi phí theo tháng</h2>
+<div class="tablewrap">
+<table class="table reporttable">
+<thead>
+<tr>
+<th>Tháng</th>
+<th>Xăng</th>
+<th>Sạc xe</th>
+<th>Bảo dưỡng</th>
+<th>Bảo hiểm TNDS</th>
+<th>Khác</th>
+<th>Tổng chi phí</th>
+<th>L/100 km</th>
+</tr>
+</thead>
+<tbody id="monthlyReportRows">
+</tbody>
+</table>
+</div>
+</article>
+<article class="card">
+<h2>Mức tiêu hao giữa hai lần đổ xăng</h2>
+<p class="reportnote">Cách tính: số lít ở lần đổ sau ÷ quãng đường giữa hai lần × 100. Kết quả chính xác nhất khi cả hai lần đều đổ đầy bình.</p>
+<div class="tablewrap">
+<table class="table reporttable">
+<thead>
+<tr>
+<th>Xe</th>
+<th>Lần trước</th>
+<th>Lần sau</th>
+<th>Quãng đường</th>
+<th>Số lít</th>
+<th>L/100 km</th>
+</tr>
+</thead>
+<tbody id="fuelReportRows">
+</tbody>
+</table>
+</div>
+</article>
+</div>
+</section>
+<section class="view" id="cars">
+<header class="top">
+<div>
+<h1>Xe của tôi</h1>
+<p>Quản lý ODO và lịch bảo dưỡng</p>
+</div>
+<button class="btn primary" id="addCar">+ Thêm xe</button>
+</header>
+<div class="carlist" id="carList">
+</div>
+</section>
+<section class="view" id="settings">
+<header class="top">
+<div>
+<h1>Cài đặt & dữ liệu</h1>
+<p>Dữ liệu nằm trong ứng dụng và có thể đồng bộ Google Drive</p>
+</div>
+</header>
+<article class="card">
+<div class="settings-note">
+<b>Google Drive</b>
+<br>Dữ liệu được lưu trong tệp <code>so-xe-data.json</code> ở vùng dữ liệu ứng dụng trên Drive của chính anh. Ứng dụng chỉ xin quyền với tệp do nó tạo.</div>
+<div class="settings-note">
+<b>Quyền riêng tư và điều khoản</b>
+<br><a href="https://lehuynhanhtu-prog.github.io/so-xe-android/privacy.html" target="_blank" rel="noopener">Chính sách quyền riêng tư</a> · <a href="https://lehuynhanhtu-prog.github.io/so-xe-android/terms.html" target="_blank" rel="noopener">Điều khoản sử dụng</a>
+</div>
+<div class="formgrid">
+<div class="field full">
+<label>Tài khoản Google</label>
+<small>Nhấn nút bên dưới và chọn tài khoản Google. Sau lần đầu cấp quyền, ứng dụng sẽ tự đồng bộ ngay sau mỗi thay đổi.</small>
+</div>
+<div class="field full">
+<div class="actions">
+<button class="btn green" id="connectDrive">Kết nối tài khoản Google</button>
+<button class="btn" id="disconnectDrive">Ngắt kết nối</button>
+</div>
+</div>
+<div class="field full">
+<label>Sao lưu thủ công</label>
+<div class="actions">
+<button class="btn" id="exportBtn">Tải dữ liệu JSON</button>
+<label class="btn" for="importFile">Nhập dữ liệu JSON</label>
+<input class="fileinput" type="file" id="importFile" accept="application/json">
+</div>
+</div>
+</div>
+</article>
+</section>
+</main>
+</div>
+<dialog class="modal" id="expenseModal">
+<form method="dialog" id="expenseForm">
+<div class="modalhead">
+<h2 id="expenseTitle">Ghi chi phí</h2>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
+</div>
+<div class="modalbody">
+<input type="hidden" id="expenseId">
+<div class="formgrid">
+<div class="field">
+<label>Xe *</label>
+<select id="expenseCar" required>
+</select>
+</div>
+<div class="field">
+<label>Ngày *</label>
+<input id="expenseDate" type="date" required>
+</div>
+<div class="field">
+<label>Loại chi phí *</label>
+<select id="expenseType">
+<option value="fuel">Đổ xăng</option>
+<option value="charge">Sạc xe</option>
+<option value="maintenance">Bảo dưỡng</option>
+<option value="insurance">Bảo hiểm TNDS</option>
+<option value="other">Khác</option>
+</select>
+</div>
+<div class="field">
+<label>ODO (km) *</label>
+<input id="expenseOdo" type="number" min="0" required>
+<small>Cảnh báo nếu ODO tăng bất thường trên 10.000 km.</small>
+</div>
+<div class="field full">
+<label>Nội dung</label>
+<input id="expenseDesc" placeholder="VD: Thay nhớt động cơ">
+</div>
+<div class="field">
+<label>Tổng tiền (đ) *</label>
+<input id="expenseAmount" type="number" min="0" required>
+</div>
+<div class="field fuelOnly">
+<label>Đơn giá/lít (đ)</label>
+<input id="fuelPrice" type="number" min="0">
+</div>
+<div class="field fuelOnly">
+<label>Số lít</label>
+<input id="fuelLiters" type="number" min="0" step="0.01">
+</div>
+<div class="field chargeOnly" style="display:none">
+<label>Pin trước khi sạc (%) *</label>
+<input id="batteryFrom" type="number" min="0" max="100" step="0.1" placeholder="VD: 20">
+</div>
+<div class="field chargeOnly" style="display:none">
+<label>Pin sau khi sạc (%) *</label>
+<input id="batteryTo" type="number" min="0" max="100" step="0.1" placeholder="VD: 90">
+</div>
+<div class="field full chargeOnly maintenanceHint" style="display:none">
+<small>Nhập mức pin trước và sau khi sạc. Phần trăm sau sạc phải lớn hơn trước sạc.</small>
+</div>
+<div class="field maintenanceOnly" style="display:none">
+<label>Chu kỳ bảo dưỡng (km) *</label>
+<input id="repeatKm" type="number" min="1" step="1" placeholder="VD: 5000">
+</div>
+<div class="field maintenanceOnly" style="display:none">
+<label>Chu kỳ bảo dưỡng (tháng) *</label>
+<input id="repeatMonths" type="number" min="1" step="1" placeholder="VD: 6">
+</div>
+<div class="field full maintenanceOnly maintenanceHint" style="display:none">
+<small>Ứng dụng sẽ nhắc khi ODO đạt chu kỳ hoặc đến ngày bảo dưỡng — điều kiện nào đến trước.</small>
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Đơn vị bảo hiểm</label>
+<input id="insuranceProvider" placeholder="VD: Bảo Việt">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Số giấy chứng nhận</label>
+<input id="insurancePolicy" placeholder="Số hợp đồng/chứng nhận">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Ngày hiệu lực *</label>
+<input id="insuranceStart" type="date">
+</div>
+<div class="field insuranceOnly" style="display:none">
+<label>Ngày hết hạn *</label>
+<input id="insuranceExpiry" type="date">
+</div>
+<div class="field full insuranceOnly maintenanceHint" style="display:none">
+<small>Ứng dụng sẽ cảnh báo trên Tổng quan từ 45 ngày trước ngày hết hạn.</small>
+</div>
+<div class="field full">
+<label>Ghi chú</label>
+<textarea id="expenseNote" rows="2">
+</textarea>
+</div>
+</div>
+</div>
+<div class="modalfoot">
+<button class="btn" type="button" data-close-dialog>Hủy</button>
+<button class="btn primary" value="default" id="saveExpense">Lưu chi phí</button>
+</div>
+</form>
+</dialog>
+<dialog class="modal detail-modal" id="expenseDetailModal">
+<form method="dialog">
+<div class="modalhead">
+<h2>Chi tiết giao dịch</h2>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
+</div>
+<div class="modalbody">
+<div class="detail-grid" id="expenseDetailBody"></div>
+</div>
+<div class="modalfoot">
+<button class="btn primary" type="button" data-close-dialog>Đóng</button>
+</div>
+</form>
+</dialog>
+<dialog class="modal" id="carModal">
+<form method="dialog" id="carForm">
+<div class="modalhead">
+<h2 id="carTitle">Thêm xe</h2>
+<button class="btn" type="button" data-close-dialog aria-label="Đóng">✕</button>
+</div>
+<div class="modalbody">
+<input type="hidden" id="carId">
+<div class="formgrid">
+<div class="field">
+<label>Biển số *</label>
+<input id="carPlate" required placeholder="00A-000.00">
+</div>
+<div class="field">
+<label>Tên xe</label>
+<input id="carName" placeholder="VD: Mazda CX-5">
+</div>
+<div class="field">
+<label>Loại xe *</label>
+<select id="carPowerType" required>
+<option value="fuel">Xe xăng/dầu</option>
+<option value="electric">Xe điện</option>
+</select>
+</div>
+<div class="field">
+<label>ODO hiện tại</label>
+<input id="carOdo" type="number" min="0" value="0">
+<small>Có thể sửa giảm sau khi đã sửa các giao dịch nhập sai ODO.</small>
+</div>
+<div class="field">
+<label>Năm sản xuất</label>
+<input id="carYear" type="number" min="1950">
+</div>
+</div>
+</div>
+<div class="modalfoot">
+<button class="btn" type="button" data-close-dialog>Hủy</button>
+<button class="btn primary" id="saveCar" value="default">Lưu xe</button>
+</div>
+</form>
+</dialog>
+<div class="toast" id="toast">
+</div>
+<script src="app.js">
+</script>
+</body>
+</html>
