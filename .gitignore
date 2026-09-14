@@ -4,3 +4,6 @@
 local.properties
 .gradle/
 **/build/
+windows/node_modules/
+windows/dist/
+windows/www/

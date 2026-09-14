@@ -1,0 +1,48 @@
+{
+  "name": "so-xe-windows",
+  "version": "1.0.0",
+  "description": "Sổ Xe — ứng dụng quản lý chi phí ô tô chạy offline trên Windows",
+  "main": "main.js",
+  "author": "Sổ Xe",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "prepare-www": "node prepare-www.js",
+    "build:win": "npm run prepare-www && electron-builder --win nsis --x64"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "vn.soxe.windows",
+    "productName": "Sổ Xe",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "www/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "www/icons/icon-512.png",
+      "forceCodeSigning": false,
+      "artifactName": "So-Xe-Windows-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Sổ Xe",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

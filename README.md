@@ -1,4 +1,4 @@
-# Sổ Xe Android và Web
+# Sổ Xe Android, Windows và Web
 
 Ứng dụng quản lý chi phí ô tô: xe xăng/dầu và xe điện, ODO, nhiên liệu, sạc pin, bảo dưỡng, bảo hiểm TNDS và báo cáo.
 
@@ -26,3 +26,9 @@ Trước khi cài bản 2.0, hãy mở bản web/bản Android cũ và chắc ch
 https://lehuynhanhtu-prog.github.io/so-xe-android/
 
 Mã GitHub Pages nằm trong `docs/` và tiếp tục hoạt động độc lập với APK.
+
+## Bản cài Windows độc lập
+
+Mã đóng gói Electron nằm trong `windows/`. Quy trình GitHub Actions tạo file `So-Xe-Windows-Setup-1.0.0.exe`, chứa toàn bộ giao diện và chức năng để sử dụng khi không có Internet. Dữ liệu được lưu bền vững tại vùng dữ liệu ứng dụng của Windows và không bị xóa khi cài bản cập nhật.
+
+Bản Windows phục vụ ứng dụng tại địa chỉ nội bộ `http://127.0.0.1:18765`. Để Google Drive hoạt động, thêm địa chỉ này vào **Authorized JavaScript origins** của OAuth Client loại **Web application** đang dùng cho GitHub Pages.
