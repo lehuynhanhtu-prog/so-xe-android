@@ -104,6 +104,21 @@ button{cursor:pointer}
 .reportmetrics{margin-bottom:16px}
 .reporttable{min-width:720px}
 .reportnote{color:var(--muted);margin:-7px 0 14px}
+.vehicle-reports{display:grid;gap:18px}
+.vehicle-report{padding:0;overflow:hidden}
+.vehicle-report-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:20px 22px;background:linear-gradient(135deg,#eef7f2,#fff8e5);border-bottom:1px solid var(--line)}
+.vehicle-report-head h2{margin:8px 0 2px}
+.vehicle-report-head>div>small{color:var(--muted)}
+.vehicle-report-totals{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.vehicle-report-totals span{display:grid;gap:4px;min-width:145px;padding:10px 13px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.vehicle-report-totals small{color:var(--muted)}
+.vehicle-report-totals b{font-size:17px;color:var(--green)}
+.vehicle-report>h3,.vehicle-report>.reportnote{margin-left:22px;margin-right:22px}
+.vehicle-report>h3{margin-top:20px;margin-bottom:12px}
+.vehicle-report>.tablewrap{margin:0 22px 22px}
+.vehicle-monthly{min-width:1050px}
+.report-total th{background:#12372a;color:#fff;white-space:nowrap}
+.fuel-detail-title{padding-top:4px;border-top:1px solid var(--line)}
 .subcell{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .maintenanceHint{background:#fff7df;border-left:4px solid var(--gold);border-radius:8px;padding:10px 12px;color:var(--muted)}
 @media(max-width:900px){.shell{display:block}
@@ -131,6 +146,11 @@ button{cursor:pointer}
 .mobile-syncbox span{max-width:145px}
 .platform-grid{grid-template-columns:1fr}
 .download-hero h1{font-size:25px}
+.vehicle-report-head{display:grid;padding:16px}
+.vehicle-report-totals{justify-content:stretch}
+.vehicle-report-totals span{min-width:0;flex:1}
+.vehicle-report>h3,.vehicle-report>.reportnote{margin-left:16px;margin-right:16px}
+.vehicle-report>.tablewrap{margin-left:16px;margin-right:16px}
 }
 .reminder .maintenance-next{margin-top:5px;color:var(--ink);font-weight:650}
 

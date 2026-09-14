@@ -178,54 +178,10 @@
 <header class="top">
 <div>
 <h1>Báo cáo</h1>
-<p>Chi phí hàng tháng và mức tiêu hao nhiên liệu</p>
+<p>Chi phí, ODO và mức tiêu hao tách riêng theo từng xe</p>
 </div>
 </header>
-<div class="grid4 reportmetrics" id="allTimeFuelMetrics">
-</div>
-<div class="reportgrid">
-<article class="card">
-<h2>Chi phí theo tháng</h2>
-<div class="tablewrap">
-<table class="table reporttable">
-<thead>
-<tr>
-<th>Tháng</th>
-<th>Xăng</th>
-<th>Sạc xe</th>
-<th>Bảo dưỡng</th>
-<th>Bảo hiểm TNDS</th>
-<th>Khác</th>
-<th>Tổng chi phí</th>
-<th>L/100 km</th>
-</tr>
-</thead>
-<tbody id="monthlyReportRows">
-</tbody>
-</table>
-</div>
-</article>
-<article class="card">
-<h2>Mức tiêu hao giữa hai lần đổ xăng</h2>
-<p class="reportnote">Cách tính: số lít ở lần đổ sau ÷ quãng đường giữa hai lần × 100. Kết quả chính xác nhất khi cả hai lần đều đổ đầy bình.</p>
-<div class="tablewrap">
-<table class="table reporttable">
-<thead>
-<tr>
-<th>Xe</th>
-<th>Lần trước</th>
-<th>Lần sau</th>
-<th>Quãng đường</th>
-<th>Số lít</th>
-<th>L/100 km</th>
-</tr>
-</thead>
-<tbody id="fuelReportRows">
-</tbody>
-</table>
-</div>
-</article>
-</div>
+<div class="vehicle-reports" id="vehicleReports"></div>
 </section>
 <section class="view" id="cars">
 <header class="top">
@@ -449,7 +405,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=19">
+<script src="app.js?v=20">
 </script>
 </body>
 </html>
