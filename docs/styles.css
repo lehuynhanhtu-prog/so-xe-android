@@ -82,7 +82,7 @@ button{cursor:pointer}
 .download-hero img{width:66px;height:66px}
 .download-hero h1{margin:0;font-size:30px}
 .download-hero p{margin:3px 0 0;color:var(--muted)}
-.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .platform-card{display:flex;flex-direction:column}
 .platform-card h2{font-size:22px;margin:4px 0}
 .platform-card>p{color:var(--muted);margin:0 0 16px}
@@ -133,6 +133,7 @@ button{cursor:pointer}
 .grid4{grid-template-columns:1fr 1fr}
 .contentgrid{grid-template-columns:1fr}
 .carlist{grid-template-columns:1fr 1fr}
+.platform-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){.top{display:block}
 .actions{margin-top:14px}
