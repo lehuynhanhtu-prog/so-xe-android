@@ -28,40 +28,62 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
-      - name: Build installable APK
+      - name: Restore permanent release signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          gradle --no-daemon :app:assembleDebug
-          gradle --no-daemon :app:signingReport > signing-report.txt
-      - name: Prepare APK
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "Thiếu một hoặc nhiều Android signing secrets."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > so-xe-release.jks
+          keytool -list -keystore so-xe-release.jks -alias "$KEY_ALIAS" -storepass "$KEYSTORE_PASSWORD" >/dev/null
+      - name: Build signed release APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk So-Xe-Android-2.0.2.apk
-          SHA1=$(awk '/Variant: debug/{seen=1} seen && /SHA1:/{print $2; exit}' signing-report.txt)
-          if [ -z "$SHA1" ]; then
-            echo "Không lấy được SHA-1 từ signingReport"
-            sed -n '/Variant: debug/,/----------/p' signing-report.txt
+          gradle --no-daemon :app:assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk So-Xe-Android-2.0.3.apk
+      - name: Verify package and permanent signature
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs So-Xe-Android-2.0.3.apk > apk-signature.txt
+          cat apk-signature.txt
+          RAW_SHA1=$(sed -n 's/^Signer #1 certificate SHA-1 digest: //p' apk-signature.txt | head -1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')
+          ACTUAL_SHA1=$(printf '%s' "$RAW_SHA1" | sed 's/../&:/g; s/:$//')
+          EXPECTED_SHA1='F5:91:29:27:7A:B5:0D:7C:98:37:D7:EE:27:C9:63:E7:2F:BE:50:50'
+          if [ "$ACTUAL_SHA1" != "$EXPECTED_SHA1" ]; then
+            echo "Sai chữ ký APK. Mong đợi $EXPECTED_SHA1 nhưng nhận được $ACTUAL_SHA1"
             exit 1
           fi
           {
             echo "Package name: vn.soxe.app"
-            echo "SHA-1: $SHA1"
-            echo "Dùng hai giá trị này để tạo OAuth Client loại Android."
+            echo "Version: 2.0.3 (versionCode 8)"
+            echo "SHA-1: $ACTUAL_SHA1"
+            echo "Đây là chữ ký release cố định dùng cho các bản cập nhật sau."
           } > Android-OAuth-SHA1.txt
           cat Android-OAuth-SHA1.txt
       - name: Publish permanent APK download
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v2.0.2 >/dev/null 2>&1; then
-            echo "Release v2.0.2 đã tồn tại; giữ nguyên APK và chữ ký hiện có."
+          if gh release view v2.0.3 >/dev/null 2>&1; then
+            echo "Release v2.0.3 đã tồn tại; giữ nguyên APK release hiện có."
           else
-            gh release create v2.0.2 So-Xe-Android-2.0.2.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.2" --notes "Báo cáo được tách theo từng biển số xe, có ODO cuối kỳ và dòng tổng ODO, tổng chi phí của từng xe."
+            gh release create v2.0.3 So-Xe-Android-2.0.3.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.3" --notes "Bản đầu tiên dùng khóa ký release cố định. Thêm chi phí Thuê pin cho xe điện và báo cáo ODO giữa các kỳ Sạc xe/Thuê pin. Người đang dùng bản 2.0.2 cần đồng bộ Drive hoặc xuất JSON, gỡ 2.0.2 rồi cài 2.0.3 một lần. Từ các bản sau có thể cài đè để cập nhật và giữ dữ liệu."
           fi
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: So-Xe-Android-2.0.2
+          name: So-Xe-Android-2.0.3-release
           path: |
-            So-Xe-Android-2.0.2.apk
+            So-Xe-Android-2.0.3.apk
             Android-OAuth-SHA1.txt
+            apk-signature.txt
           if-no-files-found: error
           retention-days: 30

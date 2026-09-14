@@ -8,8 +8,24 @@ android {
         applicationId 'vn.soxe.app'
         minSdk 24
         targetSdk 36
-        versionCode 7
-        versionName '2.0.2'
+        versionCode 8
+        versionName '2.0.3'
+    }
+
+    signingConfigs {
+        release {
+            storeFile rootProject.file('so-xe-release.jks')
+            storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            keyAlias System.getenv('ANDROID_KEY_ALIAS')
+            keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-const CACHE='so-xe-github-v21';
+const CACHE='so-xe-github-v22';
 const ASSETS=['./','./index.html','./downloads.html','./styles.css?v=21','./app.js?v=21','./privacy.html','./terms.html','./manifest.webmanifest','./icons/icon.svg','./downloads/So-Xe-iOS.mobileconfig'];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))) });
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))),self.clients.claim()])));
