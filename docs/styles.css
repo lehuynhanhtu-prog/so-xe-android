@@ -116,7 +116,7 @@ button{cursor:pointer}
 .vehicle-report>h3,.vehicle-report>.reportnote{margin-left:22px;margin-right:22px}
 .vehicle-report>h3{margin-top:20px;margin-bottom:12px}
 .vehicle-report>.tablewrap{margin:0 22px 22px}
-.vehicle-monthly{min-width:1050px}
+.vehicle-monthly{min-width:1320px}
 .report-total th{background:#12372a;color:#fff;white-space:nowrap}
 .fuel-detail-title{padding-top:4px;border-top:1px solid var(--line)}
 .subcell{display:block;color:var(--muted);font-size:12px;margin-top:2px}
