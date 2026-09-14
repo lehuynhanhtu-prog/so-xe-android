@@ -30,32 +30,38 @@ jobs:
           gradle-version: '8.13'
       - name: Build installable APK
         run: |
-          gradle --no-daemon :app:signingReport > signing-report.txt
           gradle --no-daemon :app:assembleDebug
+          gradle --no-daemon :app:signingReport > signing-report.txt
       - name: Prepare APK
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk So-Xe-Android-2.0.0.apk
+          cp app/build/outputs/apk/debug/app-debug.apk So-Xe-Android-2.0.1.apk
           SHA1=$(awk '/Variant: debug/{seen=1} seen && /SHA1:/{print $2; exit}' signing-report.txt)
+          if [ -z "$SHA1" ]; then
+            echo "Không lấy được SHA-1 từ signingReport"
+            sed -n '/Variant: debug/,/----------/p' signing-report.txt
+            exit 1
+          fi
           {
             echo "Package name: vn.soxe.app"
             echo "SHA-1: $SHA1"
             echo "Dùng hai giá trị này để tạo OAuth Client loại Android."
           } > Android-OAuth-SHA1.txt
+          cat Android-OAuth-SHA1.txt
       - name: Publish permanent APK download
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v2.0.0 >/dev/null 2>&1; then
-            echo "Release v2.0.0 đã tồn tại; giữ nguyên APK và chữ ký hiện có."
+          if gh release view v2.0.1 >/dev/null 2>&1; then
+            echo "Release v2.0.1 đã tồn tại; giữ nguyên APK và chữ ký hiện có."
           else
-            gh release create v2.0.0 So-Xe-Android-2.0.0.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.0" --notes "Ứng dụng Android độc lập: toàn bộ chức năng nằm trong APK, dùng được khi mất mạng và đồng bộ Google Drive trực tiếp từ ứng dụng."
+            gh release create v2.0.1 So-Xe-Android-2.0.1.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.1" --notes "Sửa tệp OAuth SHA-1. Ứng dụng Android độc lập: toàn bộ chức năng nằm trong APK, dùng được khi mất mạng và đồng bộ Google Drive trực tiếp từ ứng dụng."
           fi
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: So-Xe-Android-2.0.0
+          name: So-Xe-Android-2.0.1
           path: |
-            So-Xe-Android-2.0.0.apk
+            So-Xe-Android-2.0.1.apk
             Android-OAuth-SHA1.txt
           if-no-files-found: error
           retention-days: 30

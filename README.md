@@ -10,7 +10,7 @@ Dữ liệu được lưu trong vùng riêng của ứng dụng. Khi người d�
 
 ## Cấu hình OAuth Android
 
-Sau lần build đầu tiên, mở Release `v2.0.0` và tải `Android-OAuth-SHA1.txt`. Trong Google Cloud Console, tạo OAuth Client loại **Android** với:
+Sau lần build đầu tiên, mở Release `v2.0.1` và tải `Android-OAuth-SHA1.txt`. Trong Google Cloud Console, tạo OAuth Client loại **Android** với:
 
 - Package name: `vn.soxe.app`
 - SHA-1: giá trị trong `Android-OAuth-SHA1.txt`
