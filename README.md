@@ -27,8 +27,8 @@ https://lehuynhanhtu-prog.github.io/so-xe-android/
 
 Mã GitHub Pages nằm trong `docs/` và tiếp tục hoạt động độc lập với APK.
 
-## Bản cài Windows độc lập
+## Bản Windows portable gọn nhẹ
 
-Mã đóng gói Electron nằm trong `windows/`. Quy trình GitHub Actions tạo file `So-Xe-Windows-Setup-1.0.0.exe`, chứa toàn bộ giao diện và chức năng để sử dụng khi không có Internet. Dữ liệu được lưu bền vững tại vùng dữ liệu ứng dụng của Windows và không bị xóa khi cài bản cập nhật.
+Mã khởi chạy nằm trong `windows-portable/`. Quy trình GitHub Actions tạo file `So-Xe-Windows-Portable-1.1.0.zip`. Người dùng chỉ cần giải nén rồi chạy `Chay-So-Xe.bat`; không cần setup. ZIP chứa toàn bộ giao diện và chức năng, dùng Microsoft Edge có sẵn trên Windows 10/11 làm bộ hiển thị và vẫn sử dụng được khi không có Internet.
 
-Bản Windows phục vụ ứng dụng tại địa chỉ nội bộ `http://127.0.0.1:18765`. Để Google Drive hoạt động, thêm địa chỉ này vào **Authorized JavaScript origins** của OAuth Client loại **Web application** đang dùng cho GitHub Pages.
+Dữ liệu và hồ sơ trình duyệt riêng được lưu tại `%APPDATA%\SoXeData`, bên ngoài thư mục giải nén nên vẫn còn nguyên khi thay ZIP mới. Bản Windows phục vụ ứng dụng tại địa chỉ nội bộ `http://127.0.0.1:18765`. Để Google Drive hoạt động, thêm địa chỉ này vào **Authorized JavaScript origins** của OAuth Client loại **Web application** đang dùng cho GitHub Pages.

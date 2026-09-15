@@ -1,0 +1,23 @@
+SỔ XE WINDOWS PORTABLE 1.1.0
+================================
+
+KHÔNG CẦN CÀI ĐẶT
+
+1. Giải nén toàn bộ file ZIP vào một thư mục.
+2. Bấm đúp file Chay-So-Xe.bat.
+3. Ứng dụng mở trong cửa sổ riêng bằng Microsoft Edge có sẵn trên Windows.
+4. Kết nối Google Drive một lần nếu muốn dùng chung dữ liệu với Web/Android.
+
+LƯU Ý
+
+- Không chạy trực tiếp file BAT khi file ZIP chưa được giải nén.
+- Không xóa riêng thư mục www nằm cạnh file BAT.
+- Ứng dụng dùng được khi mất mạng. Khi có mạng, dữ liệu chờ sẽ tự đồng bộ Google Drive.
+- Dữ liệu cục bộ được giữ tại: %APPDATA%\SoXeData
+- Khi cập nhật, chỉ cần tải ZIP mới, giải nén và chạy; dữ liệu cũ không bị xóa.
+- Để Google Drive hoạt động, Authorized JavaScript origins của OAuth Web cần có:
+  http://127.0.0.1:18765
+
+Nếu Windows chặn file BAT, bấm chuột phải vào file ZIP trước khi giải nén,
+chọn Properties (Thuộc tính) -> Unblock (Bỏ chặn) -> Apply.
+

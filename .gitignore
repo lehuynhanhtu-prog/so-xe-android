@@ -7,3 +7,4 @@ local.properties
 windows/node_modules/
 windows/dist/
 windows/www/
+windows-portable/dist/
