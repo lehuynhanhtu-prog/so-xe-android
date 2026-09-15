@@ -7,6 +7,14 @@ $WebRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'www'))
 $DataRoot = Join-Path $env:APPDATA 'SoXeData'
 $EdgeProfile = Join-Path $DataRoot 'EdgeProfile'
 $HealthMarker = 'SOXE_PORTABLE_1'
+$LogPath = Join-Path $DataRoot 'SoXeServer.log'
+
+New-Item -ItemType Directory -Path $DataRoot -Force | Out-Null
+
+function Write-SoxeLog([string]$Message) {
+    $Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    Add-Content -Path $LogPath -Encoding UTF8 -Value "[$Timestamp] $Message"
+}
 
 function Show-SoxeError([string]$Message) {
     Add-Type -AssemblyName PresentationFramework
@@ -14,12 +22,15 @@ function Show-SoxeError([string]$Message) {
 }
 
 function Find-Edge {
-    $Candidates = @(
-        (Join-Path ${env:ProgramFiles(x86)} 'Microsoft\Edge\Application\msedge.exe'),
-        (Join-Path $env:ProgramFiles 'Microsoft\Edge\Application\msedge.exe'),
-        (Join-Path $env:LOCALAPPDATA 'Microsoft\Edge\Application\msedge.exe')
-    )
-    return $Candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
+    $Candidates = @()
+    foreach ($BasePath in @(${env:ProgramFiles(x86)}, $env:ProgramFiles, $env:LOCALAPPDATA)) {
+        if ($BasePath) {
+            $Candidates += Join-Path $BasePath 'Microsoft\Edge\Application\msedge.exe'
+        }
+    }
+    $Found = $Candidates | Where-Object { Test-Path $_ -PathType Leaf } | Select-Object -First 1
+    if ($Found) { return $Found }
+    return (Get-Command 'msedge.exe' -ErrorAction SilentlyContinue).Source
 }
 
 function Start-SoxeWindow([string]$EdgePath) {
@@ -122,6 +133,7 @@ function Handle-Request($Client) {
 }
 
 try {
+    Write-SoxeLog 'Đang khởi động Sổ Xe Windows Portable.'
     if (-not (Test-Path (Join-Path $WebRoot 'index.html'))) {
         Show-SoxeError 'Thiếu thư mục www. Hãy giải nén đầy đủ file ZIP rồi chạy lại.'
         exit 1
@@ -135,6 +147,7 @@ try {
 
     if (Test-SoxeServer) {
         Start-SoxeWindow $EdgePath | Out-Null
+        Write-SoxeLog 'Đã mở thêm cửa sổ từ máy chủ đang chạy.'
         exit 0
     }
 
@@ -146,10 +159,14 @@ try {
         exit 1
     }
 
-    $EdgeProcess = Start-SoxeWindow $EdgePath
+    Start-SoxeWindow $EdgePath | Out-Null
+    Write-SoxeLog "Máy chủ đã chạy tại $AppOrigin"
     $AcceptTask = $Listener.AcceptTcpClientAsync()
 
-    while (-not $EdgeProcess.HasExited) {
+    # Edge thường chuyển cửa sổ sang một tiến trình khác rồi kết thúc tiến trình
+    # do Start-Process trả về. Máy chủ phải tiếp tục chạy độc lập để cửa sổ ứng
+    # dụng không mất kết nối ngay sau khi mở.
+    while ($true) {
         if ($AcceptTask.Wait(250)) {
             $Client = $AcceptTask.Result
             $AcceptTask = $Listener.AcceptTcpClientAsync()
@@ -157,9 +174,9 @@ try {
         }
     }
 } catch {
+    Write-SoxeLog "LỖI: $($_.Exception.ToString())"
     Show-SoxeError "Không thể mở Sổ Xe.`n`n$($_.Exception.Message)"
     exit 1
 } finally {
     if ($Listener) { $Listener.Stop() }
 }
-
