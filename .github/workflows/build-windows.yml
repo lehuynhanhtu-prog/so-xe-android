@@ -26,7 +26,9 @@ jobs:
           if (-not (Test-Path $csc)) {
             $csc = "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319\csc.exe"
           }
-          & $csc /nologo /target:winexe /optimize+ /reference:System.Windows.Forms.dll /out:windows-portable/SoXeLauncher.exe windows-portable/SoXeLauncher.cs
+          $source = (Resolve-Path 'windows-portable\SoXeLauncher.cs').Path
+          $output = Join-Path $PWD 'windows-portable\SoXeLauncher.exe'
+          & $csc /nologo /target:winexe /optimize+ /reference:System.Windows.Forms.dll "/out:$output" "$source"
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path 'windows-portable/SoXeLauncher.exe')) {
             throw 'Khong bien dich duoc SoXeLauncher.exe'
           }
