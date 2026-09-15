@@ -24,7 +24,7 @@ internal static class SoXeLauncher
             DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
             LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
             Directory.CreateDirectory(DataRoot);
-            Log("Bat dau khoi dong So Xe Windows Portable 1.1.6.");
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.7.");
 
             WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
             if (!File.Exists(Path.Combine(WebRoot, "index.html")))
