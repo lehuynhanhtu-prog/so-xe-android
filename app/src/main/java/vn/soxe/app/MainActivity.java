@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -37,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,7 +47,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,7 +55,9 @@ public class MainActivity extends ComponentActivity {
     private static final String APP_URL = "https://appassets.androidplatform.net/assets/www/index.html";
     private static final String APP_HOST = "appassets.androidplatform.net";
     private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.appdata";
+    private static final String DRIVE_FILE_SCOPE = "https://www.googleapis.com/auth/drive.file";
     private static final String DRIVE_FILE = "so-xe-data.json";
+    private static final String ATTACHMENT_FOLDER = "Sổ xe";
     private static final String PREFS = "soxe_native";
     private static final String PREF_DISCONNECTED = "drive_disconnected";
 
@@ -61,7 +65,8 @@ public class MainActivity extends ComponentActivity {
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
     private String exportJson;
-    private String currentAccessToken;
+    private volatile String currentAccessToken;
+    private String attachmentFolderId;
     private PendingSync pendingSync;
 
     private ActivityResultLauncher<IntentSenderRequest> authorizationLauncher;
@@ -255,8 +260,37 @@ public class MainActivity extends ComponentActivity {
         }
 
         @JavascriptInterface
+        public boolean hasDriveToken() {
+            return currentAccessToken != null && !currentAccessToken.isEmpty();
+        }
+
+        @JavascriptInterface
+        public void uploadAttachment(String expenseId, String fileName, String mimeType,
+                                     String base64Data, long fileSize) {
+            String token = currentAccessToken;
+            if (token == null || token.isEmpty()) {
+                runJs("window.nativeAttachmentError(" + JSONObject.quote(
+                        "Hãy kết nối Google Drive trước khi đính kèm tệp.") + ")");
+                return;
+            }
+            ioExecutor.execute(() -> performAttachmentUpload(token, expenseId, fileName,
+                    mimeType, base64Data, fileSize));
+        }
+
+        @JavascriptInterface
+        public void openUrl(String url) {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                } catch (Exception error) {
+                    Toast.makeText(MainActivity.this, "Không tìm thấy ứng dụng mở tệp.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        @JavascriptInterface
         public String appVersion() {
-            return "2.0.8";
+            return "2.0.9";
         }
     }
 
@@ -267,7 +301,7 @@ public class MainActivity extends ComponentActivity {
         }
         pendingSync = new PendingSync(localJson, dirty, interactive);
         AuthorizationRequest request = AuthorizationRequest.builder()
-                .setRequestedScopes(Collections.singletonList(new Scope(DRIVE_SCOPE)))
+                .setRequestedScopes(Arrays.asList(new Scope(DRIVE_SCOPE), new Scope(DRIVE_FILE_SCOPE)))
                 .build();
         Identity.getAuthorizationClient(this)
                 .authorize(request)
@@ -294,6 +328,7 @@ public class MainActivity extends ComponentActivity {
             return;
         }
         currentAccessToken = token;
+        attachmentFolderId = null;
         getPreferences().edit().putBoolean(PREF_DISCONNECTED, false).apply();
         PendingSync work = pendingSync;
         pendingSync = null;
@@ -370,6 +405,94 @@ public class MainActivity extends ComponentActivity {
                 "multipart/related; boundary=" + boundary, body);
     }
 
+    private void performAttachmentUpload(String token, String expenseId, String fileName,
+                                         String mimeType, String base64Data, long fileSize) {
+        try {
+            byte[] fileBytes = Base64.decode(base64Data, Base64.DEFAULT);
+            if (fileBytes.length > 15 * 1024 * 1024) {
+                throw new IOException("Tệp đính kèm lớn hơn giới hạn 15 MB.");
+            }
+            String folderId = findOrCreateAttachmentFolder(token);
+            String boundary = "soxe-attachment-" + System.currentTimeMillis();
+            JSONObject metadata = new JSONObject()
+                    .put("name", fileName)
+                    .put("parents", new JSONArray().put(folderId));
+            ByteArrayOutputStream body = new ByteArrayOutputStream();
+            body.write(("--" + boundary + "\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"
+                    + metadata + "\r\n--" + boundary + "\r\nContent-Type: "
+                    + (mimeType == null || mimeType.isEmpty() ? "application/octet-stream" : mimeType)
+                    + "\r\n\r\n").getBytes(StandardCharsets.UTF_8));
+            body.write(fileBytes);
+            body.write(("\r\n--" + boundary + "--").getBytes(StandardCharsets.UTF_8));
+            String response = httpBytes(token, "POST",
+                    "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType,size,webViewLink",
+                    "multipart/related; boundary=" + boundary, body.toByteArray());
+            JSONObject uploaded = new JSONObject(response);
+            JSONObject attachment = new JSONObject()
+                    .put("driveFileId", uploaded.getString("id"))
+                    .put("name", uploaded.optString("name", fileName))
+                    .put("mimeType", uploaded.optString("mimeType", mimeType))
+                    .put("size", uploaded.optLong("size", fileSize))
+                    .put("webViewLink", uploaded.optString("webViewLink"))
+                    .put("uploadedAt", String.valueOf(System.currentTimeMillis()));
+            runJs("window.nativeAttachmentUploaded(" + JSONObject.quote(expenseId) + ","
+                    + JSONObject.quote(attachment.toString()) + ")");
+        } catch (Exception error) {
+            if (error instanceof HttpStatusException && ((HttpStatusException) error).status == 401) {
+                clearInvalidToken(currentAccessToken);
+            }
+            runJs("window.nativeAttachmentError(" + JSONObject.quote(error.getMessage() == null
+                    ? "Không tải được tệp đính kèm lên Google Drive" : error.getMessage()) + ")");
+        }
+    }
+
+    private String findOrCreateAttachmentFolder(String token) throws IOException, JSONException {
+        if (attachmentFolderId != null && !attachmentFolderId.isEmpty()) return attachmentFolderId;
+        String query = URLEncoder.encode("name='" + ATTACHMENT_FOLDER
+                + "' and mimeType='application/vnd.google-apps.folder' and trashed=false", "UTF-8");
+        JSONObject response = new JSONObject(http(token, "GET",
+                "https://www.googleapis.com/drive/v3/files?q=" + query
+                        + "&spaces=drive&fields=files(id,name)&pageSize=10", null, null));
+        JSONArray files = response.optJSONArray("files");
+        if (files != null && files.length() > 0) {
+            attachmentFolderId = files.getJSONObject(0).getString("id");
+            return attachmentFolderId;
+        }
+        JSONObject metadata = new JSONObject()
+                .put("name", ATTACHMENT_FOLDER)
+                .put("mimeType", "application/vnd.google-apps.folder");
+        JSONObject created = new JSONObject(http(token, "POST",
+                "https://www.googleapis.com/drive/v3/files?fields=id,name",
+                "application/json; charset=UTF-8", metadata.toString()));
+        attachmentFolderId = created.getString("id");
+        return attachmentFolderId;
+    }
+
+    private String httpBytes(String token, String method, String address,
+                             String contentType, byte[] body) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+        connection.setConnectTimeout(20000);
+        connection.setReadTimeout(60000);
+        connection.setRequestMethod(method);
+        connection.setRequestProperty("Authorization", "Bearer " + token);
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Content-Type", contentType);
+        connection.setFixedLengthStreamingMode(body.length);
+        try (OutputStream output = connection.getOutputStream()) {
+            output.write(body);
+        }
+        int status = connection.getResponseCode();
+        InputStream input = status >= 200 && status < 300
+                ? connection.getInputStream() : connection.getErrorStream();
+        String response = readAll(input);
+        connection.disconnect();
+        if (status < 200 || status >= 300) {
+            throw new HttpStatusException(status, driveErrorMessage(status, response));
+        }
+        return response;
+    }
+
     private String http(String token, String method, String address,
                         @Nullable String contentType, @Nullable String body) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
@@ -438,6 +561,7 @@ public class MainActivity extends ComponentActivity {
     private void disconnectDrive() {
         getPreferences().edit().putBoolean(PREF_DISCONNECTED, true).apply();
         clearInvalidToken(currentAccessToken);
+        attachmentFolderId = null;
         runJs("window.nativeDriveDisconnected()");
     }
 

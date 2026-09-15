@@ -8,7 +8,7 @@
 <meta name="description" content="Theo dõi xe xăng, xe điện, xe Điện-Xăng, bảo dưỡng và chi phí sử dụng ô tô">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="styles.css?v=22">
+<link rel="stylesheet" href="styles.css?v=23">
 <script src="https://accounts.google.com/gsi/client" async defer>
 </script>
 </head>
@@ -219,7 +219,7 @@
 <article class="card">
 <div class="settings-note">
 <b>Google Drive</b>
-<br>Dữ liệu được lưu trong tệp <code>so-xe-data.json</code> ở vùng dữ liệu ứng dụng trên Drive của chính anh. Ứng dụng chỉ xin quyền với tệp do nó tạo.</div>
+<br>Dữ liệu được lưu trong tệp <code>so-xe-data.json</code> ở vùng riêng. Tệp đính kèm do ứng dụng tạo nằm trong thư mục <code>Sổ xe</code> trên Drive của chính anh.</div>
 <div class="settings-note">
 <b>Quyền riêng tư và điều khoản</b>
 <br><a href="privacy.html" target="_blank" rel="noopener">Chính sách quyền riêng tư</a> · <a href="terms.html" target="_blank" rel="noopener">Điều khoản sử dụng</a>
@@ -290,7 +290,7 @@
 <div class="field">
 <label>ODO (km) *</label>
 <input id="expenseOdo" type="number" min="0" required>
-<small>Cảnh báo nếu ODO tăng bất thường trên 10.000 km.</small>
+<small>Cảnh báo nếu ODO tăng bất thường trên 1.000 km.</small>
 </div>
 <div class="field full">
 <label>Nội dung</label>
@@ -354,6 +354,13 @@
 <textarea id="expenseNote" rows="2">
 </textarea>
 </div>
+<div class="field full attachment-field">
+<label>Tệp đính kèm</label>
+<input id="expenseAttachments" type="file" multiple>
+<small>Ảnh, PDF, Word, Excel và các tệp thông dụng; tối đa 15 MB mỗi tệp. Tệp được lưu trong thư mục “Sổ xe” trên Google Drive.</small>
+<div id="selectedAttachments" class="attachment-list"></div>
+<div id="existingAttachments" class="attachment-list"></div>
+</div>
 </div>
 </div>
 <div class="modalfoot">
@@ -370,6 +377,7 @@
 </div>
 <div class="modalbody">
 <div class="detail-grid" id="expenseDetailBody"></div>
+<div id="expenseDetailAttachments" class="detail-attachments"></div>
 </div>
 <div class="modalfoot">
 <button class="btn primary" type="button" data-close-dialog>Đóng</button>
@@ -420,7 +428,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=28">
+<script src="app.js?v=29">
 </script>
 </body>
 </html>
