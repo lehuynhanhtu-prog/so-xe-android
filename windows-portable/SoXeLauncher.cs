@@ -1,0 +1,196 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+
+internal static class SoXeLauncher
+{
+    private const int Port = 18765;
+    private const string Origin = "http://127.0.0.1:18765/";
+    private const string HealthMarker = "SOXE_PORTABLE_1";
+    private static string WebRoot;
+    private static string DataRoot;
+    private static string EdgeProfile;
+    private static string LogPath;
+
+    [STAThread]
+    private static void Main()
+    {
+        try
+        {
+            DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
+            EdgeProfile = Path.Combine(DataRoot, "EdgeProfile");
+            LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
+            Directory.CreateDirectory(DataRoot);
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.4.");
+
+            WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
+            if (!File.Exists(Path.Combine(WebRoot, "index.html")))
+                throw new FileNotFoundException("Thieu thu muc www. Hay giai nen day du file ZIP roi chay lai.");
+
+            string edge = FindEdge();
+            if (String.IsNullOrEmpty(edge))
+                throw new FileNotFoundException("Khong tim thay Microsoft Edge. Hay cai hoac cap nhat Microsoft Edge.");
+
+            if (ServerIsRunning())
+            {
+                StartEdge(edge);
+                Log("Da mo cua so tu may chu dang chay.");
+                return;
+            }
+
+            TcpListener listener = new TcpListener(IPAddress.Loopback, Port);
+            listener.Start();
+            Log("May chu da chay tai " + Origin);
+            StartEdge(edge);
+
+            while (true)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                ThreadPool.QueueUserWorkItem(delegate(object state) { HandleRequest((TcpClient)state); }, client);
+            }
+        }
+        catch (Exception ex)
+        {
+            TryLog("LOI: " + ex);
+            MessageBox.Show("Khong the mo So Xe.\r\n\r\n" + ex.Message +
+                "\r\n\r\nNhat ky: %APPDATA%\\SoXeData\\SoXeLauncher.log",
+                "So Xe", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private static string FindEdge()
+    {
+        string[] bases = {
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+        };
+        foreach (string basePath in bases)
+        {
+            if (String.IsNullOrEmpty(basePath)) continue;
+            string candidate = Path.Combine(basePath, "Microsoft", "Edge", "Application", "msedge.exe");
+            if (File.Exists(candidate)) return candidate;
+        }
+        return null;
+    }
+
+    private static void StartEdge(string edge)
+    {
+        Directory.CreateDirectory(EdgeProfile);
+        ProcessStartInfo info = new ProcessStartInfo();
+        info.FileName = edge;
+        info.Arguments = "--user-data-dir=\"" + EdgeProfile + "\" --app=\"" + Origin +
+            "\" --no-first-run --disable-features=msEdgeSidebarV2";
+        info.UseShellExecute = false;
+        Process.Start(info);
+    }
+
+    private static bool ServerIsRunning()
+    {
+        try
+        {
+            using (TcpClient client = new TcpClient())
+            {
+                IAsyncResult result = client.BeginConnect("127.0.0.1", Port, null, null);
+                if (!result.AsyncWaitHandle.WaitOne(800)) return false;
+                client.EndConnect(result);
+                NetworkStream stream = client.GetStream();
+                byte[] request = Encoding.ASCII.GetBytes("GET /__soxe_health HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n");
+                stream.Write(request, 0, request.Length);
+                stream.ReadTimeout = 1200;
+                using (StreamReader reader = new StreamReader(stream))
+                    return reader.ReadToEnd().Contains(HealthMarker);
+            }
+        }
+        catch { return false; }
+    }
+
+    private static void HandleRequest(TcpClient client)
+    {
+        using (client)
+        {
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                stream.ReadTimeout = 3000;
+                string requestLine;
+                using (StreamReader reader = new StreamReader(stream, Encoding.ASCII, false, 4096, true))
+                {
+                    requestLine = reader.ReadLine();
+                    string line;
+                    while ((line = reader.ReadLine()) != null && line.Length != 0) { }
+                }
+                if (String.IsNullOrWhiteSpace(requestLine)) return;
+                string[] parts = requestLine.Split(' ');
+                if (parts.Length < 2 || (parts[0] != "GET" && parts[0] != "HEAD"))
+                {
+                    WriteResponse(stream, 405, "Method Not Allowed", "text/plain; charset=utf-8", Encoding.UTF8.GetBytes("Method Not Allowed"), false);
+                    return;
+                }
+
+                bool headOnly = parts[0] == "HEAD";
+                string requestPath = new Uri(new Uri(Origin), parts[1]).AbsolutePath;
+                if (requestPath == "/__soxe_health")
+                {
+                    WriteResponse(stream, 200, "OK", "text/plain; charset=utf-8", Encoding.UTF8.GetBytes(HealthMarker), headOnly);
+                    return;
+                }
+
+                string relative = Uri.UnescapeDataString(requestPath).TrimStart('/');
+                if (String.IsNullOrWhiteSpace(relative)) relative = "index.html";
+                string filePath = Path.GetFullPath(Path.Combine(WebRoot, relative.Replace('/', Path.DirectorySeparatorChar)));
+                string rootPrefix = WebRoot.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+                if (!filePath.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase) || !File.Exists(filePath))
+                {
+                    WriteResponse(stream, 404, "Not Found", "text/plain; charset=utf-8", Encoding.UTF8.GetBytes("Khong tim thay tai nguyen"), headOnly);
+                    return;
+                }
+                WriteResponse(stream, 200, "OK", MimeType(filePath), File.ReadAllBytes(filePath), headOnly);
+            }
+            catch (Exception ex) { TryLog("Loi xu ly yeu cau: " + ex.Message); }
+        }
+    }
+
+    private static void WriteResponse(Stream stream, int code, string status, string contentType, byte[] body, bool headOnly)
+    {
+        string headers = "HTTP/1.1 " + code + " " + status + "\r\nContent-Type: " + contentType +
+            "\r\nContent-Length: " + body.Length + "\r\nCache-Control: no-cache\r\n" +
+            "X-Content-Type-Options: nosniff\r\nService-Worker-Allowed: /\r\nConnection: close\r\n\r\n";
+        byte[] headerBytes = Encoding.ASCII.GetBytes(headers);
+        stream.Write(headerBytes, 0, headerBytes.Length);
+        if (!headOnly && body.Length > 0) stream.Write(body, 0, body.Length);
+        stream.Flush();
+    }
+
+    private static string MimeType(string file)
+    {
+        switch (Path.GetExtension(file).ToLowerInvariant())
+        {
+            case ".html": return "text/html; charset=utf-8";
+            case ".css": return "text/css; charset=utf-8";
+            case ".js": return "text/javascript; charset=utf-8";
+            case ".json": return "application/json; charset=utf-8";
+            case ".webmanifest": return "application/manifest+json; charset=utf-8";
+            case ".svg": return "image/svg+xml";
+            case ".png": return "image/png";
+            case ".ico": return "image/x-icon";
+            case ".mobileconfig": return "application/x-apple-aspen-config";
+            default: return "application/octet-stream";
+        }
+    }
+
+    private static void Log(string message)
+    {
+        File.AppendAllText(LogPath, "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + message + Environment.NewLine, Encoding.UTF8);
+    }
+
+    private static void TryLog(string message)
+    {
+        try { Log(message); } catch { }
+    }
+}

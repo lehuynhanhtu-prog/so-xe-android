@@ -29,6 +29,6 @@ Mã GitHub Pages nằm trong `docs/` và tiếp tục hoạt động độc lậ
 
 ## Bản Windows portable gọn nhẹ
 
-Mã khởi chạy nằm trong `windows-portable/`. Quy trình GitHub Actions tạo file `So-Xe-Windows-Portable-1.1.3.zip`. Người dùng chỉ cần giải nén rồi chạy `Chay-So-Xe.bat`; không cần setup. ZIP chứa toàn bộ giao diện và chức năng, dùng Microsoft Edge có sẵn trên Windows 10/11 làm bộ hiển thị và vẫn sử dụng được khi không có Internet.
+Mã khởi chạy nằm trong `windows-portable/`. Quy trình GitHub Actions biên dịch bộ khởi chạy gọn nhẹ và tạo file `So-Xe-Windows-Portable-1.1.4.zip`. Người dùng chỉ cần giải nén rồi chạy `Chay-So-Xe.bat`; không cần PowerShell hay setup. ZIP chứa toàn bộ giao diện và chức năng, dùng Microsoft Edge có sẵn trên Windows 10/11 làm bộ hiển thị và vẫn sử dụng được khi không có Internet.
 
 Dữ liệu và hồ sơ trình duyệt riêng được lưu tại `%APPDATA%\SoXeData`, bên ngoài thư mục giải nén nên vẫn còn nguyên khi thay ZIP mới. Bản Windows phục vụ ứng dụng tại địa chỉ nội bộ `http://127.0.0.1:18765`. Để Google Drive hoạt động, thêm địa chỉ này vào **Authorized JavaScript origins** của OAuth Client loại **Web application** đang dùng cho GitHub Pages.
