@@ -35,8 +35,8 @@ jobs:
       - name: Build lightweight portable ZIP
         shell: pwsh
         run: |
-          $stage = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.4'
-          $zip = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.4.zip'
+          $stage = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.5'
+          $zip = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.5.zip'
           New-Item -ItemType Directory -Path $stage -Force | Out-Null
           Copy-Item 'windows-portable/Chay-So-Xe.bat' $stage
           Copy-Item 'windows-portable/SoXeLauncher.exe' $stage
@@ -47,29 +47,29 @@ jobs:
       - name: Create checksum
         shell: pwsh
         run: |
-          $file = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.4.zip'
+          $file = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.5.zip'
           $hash = (Get-FileHash $file -Algorithm SHA256).Hash
-          "SHA-256: $hash`nFile: So-Xe-Windows-Portable-1.1.4.zip" | Set-Content -Encoding UTF8 -NoNewline 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
+          "SHA-256: $hash`nFile: So-Xe-Windows-Portable-1.1.5.zip" | Set-Content -Encoding UTF8 -NoNewline 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
           Get-Content 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
       - name: Publish Windows download
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = 'windows-portable-v1.1.4'
-          $archive = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.4.zip'
+          $tag = 'windows-portable-v1.1.5'
+          $archive = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.5.zip'
           $checksum = 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
           if (gh release view $tag 2>$null) {
             gh release upload $tag $archive $checksum --clobber
           } else {
-            gh release create $tag $archive $checksum --target $env:GITHUB_SHA --title 'Sổ Xe Windows Portable 1.1.4' --notes 'Thay bộ khởi chạy PowerShell bằng SoXeLauncher.exe gọn nhẹ để tránh chính sách Windows chặn file PS1. BAT tạo nhật ký ngay tại %APPDATA%\SoXeData\SoXeBat.log; chương trình tạo SoXeLauncher.log. Giải nén ZIP rồi chạy Chay-So-Xe.bat; dữ liệu cũ được giữ nguyên.'
+            gh release create $tag $archive $checksum --target $env:GITHUB_SHA --title 'Sổ Xe Windows Portable 1.1.5' --notes 'Mở Sổ Xe bằng trình duyệt mặc định của Windows để dùng sẵn phiên đăng nhập và các tài khoản Google đã lưu trong Chrome hoặc Edge. Máy chủ nội bộ vẫn dùng SoXeLauncher.exe, không phụ thuộc PowerShell. Hãy đồng bộ Drive trên bản cũ trước khi chuyển; dữ liệu Drive không thay đổi.'
           }
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: So-Xe-Windows-Portable-1.1.4
+          name: So-Xe-Windows-Portable-1.1.5
           path: |
-            windows-portable/dist/So-Xe-Windows-Portable-1.1.4.zip
+            windows-portable/dist/So-Xe-Windows-Portable-1.1.5.zip
             windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt
           if-no-files-found: error
           retention-days: 30

@@ -1,18 +1,20 @@
-SỔ XE WINDOWS PORTABLE 1.1.4
+SỔ XE WINDOWS PORTABLE 1.1.5
 ================================
 
 KHÔNG CẦN CÀI ĐẶT
 
 1. Giải nén toàn bộ file ZIP vào một thư mục.
 2. Bấm đúp file Chay-So-Xe.bat.
-3. Ứng dụng mở trong cửa sổ riêng bằng Microsoft Edge có sẵn trên Windows.
-4. Kết nối Google Drive một lần nếu muốn dùng chung dữ liệu với Web/Android.
+3. Ứng dụng mở bằng trình duyệt mặc định của Windows.
+4. Nếu trình duyệt đã đăng nhập Google, màn hình kết nối Drive sẽ cho chọn
+   ngay tài khoản Google đã lưu.
 
 LƯU Ý
 
 - Không chạy trực tiếp file BAT khi file ZIP chưa được giải nén.
 - Không xóa riêng thư mục www nằm cạnh file BAT.
 - Ứng dụng dùng được khi mất mạng. Khi có mạng, dữ liệu chờ sẽ tự đồng bộ Google Drive.
+- Trước khi đổi từ bản 1.1.4, hãy bảo đảm dữ liệu đã đồng bộ Google Drive.
 - Dữ liệu cục bộ được giữ tại: %APPDATA%\SoXeData
 - Nếu không mở được, kiểm tra 2 file:
   %APPDATA%\SoXeData\SoXeBat.log

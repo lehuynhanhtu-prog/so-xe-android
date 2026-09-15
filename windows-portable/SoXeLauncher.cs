@@ -14,7 +14,6 @@ internal static class SoXeLauncher
     private const string HealthMarker = "SOXE_PORTABLE_1";
     private static string WebRoot;
     private static string DataRoot;
-    private static string EdgeProfile;
     private static string LogPath;
 
     [STAThread]
@@ -23,22 +22,17 @@ internal static class SoXeLauncher
         try
         {
             DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
-            EdgeProfile = Path.Combine(DataRoot, "EdgeProfile");
             LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
             Directory.CreateDirectory(DataRoot);
-            Log("Bat dau khoi dong So Xe Windows Portable 1.1.4.");
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.5.");
 
             WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
             if (!File.Exists(Path.Combine(WebRoot, "index.html")))
                 throw new FileNotFoundException("Thieu thu muc www. Hay giai nen day du file ZIP roi chay lai.");
 
-            string edge = FindEdge();
-            if (String.IsNullOrEmpty(edge))
-                throw new FileNotFoundException("Khong tim thay Microsoft Edge. Hay cai hoac cap nhat Microsoft Edge.");
-
             if (ServerIsRunning())
             {
-                StartEdge(edge);
+                OpenDefaultBrowser();
                 Log("Da mo cua so tu may chu dang chay.");
                 return;
             }
@@ -46,7 +40,7 @@ internal static class SoXeLauncher
             TcpListener listener = new TcpListener(IPAddress.Loopback, Port);
             listener.Start();
             Log("May chu da chay tai " + Origin);
-            StartEdge(edge);
+            OpenDefaultBrowser();
 
             while (true)
             {
@@ -63,30 +57,10 @@ internal static class SoXeLauncher
         }
     }
 
-    private static string FindEdge()
+    private static void OpenDefaultBrowser()
     {
-        string[] bases = {
-            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-        };
-        foreach (string basePath in bases)
-        {
-            if (String.IsNullOrEmpty(basePath)) continue;
-            string candidate = Path.Combine(basePath, "Microsoft", "Edge", "Application", "msedge.exe");
-            if (File.Exists(candidate)) return candidate;
-        }
-        return null;
-    }
-
-    private static void StartEdge(string edge)
-    {
-        Directory.CreateDirectory(EdgeProfile);
-        ProcessStartInfo info = new ProcessStartInfo();
-        info.FileName = edge;
-        info.Arguments = "--user-data-dir=\"" + EdgeProfile + "\" --app=\"" + Origin +
-            "\" --no-first-run --disable-features=msEdgeSidebarV2";
-        info.UseShellExecute = false;
+        ProcessStartInfo info = new ProcessStartInfo(Origin);
+        info.UseShellExecute = true;
         Process.Start(info);
     }
 
