@@ -36,8 +36,8 @@ jobs:
       - name: Build lightweight portable ZIP
         shell: pwsh
         run: |
-          $stage = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.1'
-          $zip = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.1.zip'
+          $stage = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.2'
+          $zip = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.2.zip'
           New-Item -ItemType Directory -Path $stage -Force | Out-Null
           Copy-Item 'windows-portable/Chay-So-Xe.bat' $stage
           Copy-Item 'windows-portable/SoXeServer.ps1' $stage
@@ -48,29 +48,29 @@ jobs:
       - name: Create checksum
         shell: pwsh
         run: |
-          $file = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.1.zip'
+          $file = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.2.zip'
           $hash = (Get-FileHash $file -Algorithm SHA256).Hash
-          "SHA-256: $hash`nFile: So-Xe-Windows-Portable-1.1.1.zip" | Set-Content -Encoding UTF8 -NoNewline 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
+          "SHA-256: $hash`nFile: So-Xe-Windows-Portable-1.1.2.zip" | Set-Content -Encoding UTF8 -NoNewline 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
           Get-Content 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
       - name: Publish Windows download
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = 'windows-portable-v1.1.1'
-          $archive = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.1.zip'
+          $tag = 'windows-portable-v1.1.2'
+          $archive = 'windows-portable/dist/So-Xe-Windows-Portable-1.1.2.zip'
           $checksum = 'windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt'
           if (gh release view $tag 2>$null) {
             gh release upload $tag $archive $checksum --clobber
           } else {
-            gh release create $tag $archive $checksum --target $env:GITHUB_SHA --title 'Sổ Xe Windows Portable 1.1.1' --notes 'Thêm xe Điện-Xăng và báo cáo tháng tự ẩn cột theo loại xe. Bản Windows gọn nhẹ, không cần cài đặt: giải nén ZIP và chạy Chay-So-Xe.bat. Dữ liệu tại %APPDATA%\SoXeData được giữ khi cập nhật.'
+            gh release create $tag $archive $checksum --target $env:GITHUB_SHA --title 'Sổ Xe Windows Portable 1.1.2' --notes 'Thêm chi phí Phụ tùng, Đăng kiểm và Phí đường bộ; cảnh báo trước hạn 45 ngày. Bản Windows gọn nhẹ, không cần cài đặt: giải nén ZIP và chạy Chay-So-Xe.bat. Dữ liệu tại %APPDATA%\SoXeData được giữ khi cập nhật.'
           }
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: So-Xe-Windows-Portable-1.1.1
+          name: So-Xe-Windows-Portable-1.1.2
           path: |
-            windows-portable/dist/So-Xe-Windows-Portable-1.1.1.zip
+            windows-portable/dist/So-Xe-Windows-Portable-1.1.2.zip
             windows-portable/dist/So-Xe-Windows-Portable-SHA256.txt
           if-no-files-found: error
           retention-days: 30

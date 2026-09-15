@@ -98,6 +98,12 @@
 <div id="insuranceReminders">
 </div>
 </article>
+<article class="card insurance-card">
+<h2>Đăng kiểm và phí đường bộ của các xe</h2>
+<p class="section-note">Luôn hiển thị kỳ hiện có và cảnh báo nổi bật trong vòng 45 ngày trước khi hết hạn.</p>
+<div id="vehicleDocumentReminders">
+</div>
+</article>
 <article class="card" style="margin-top:16px">
 <div class="recent-head">
 <div>
@@ -147,7 +153,10 @@
 <option value="charge">Sạc xe</option>
 <option value="batteryRental">Thuê pin</option>
 <option value="maintenance">Bảo dưỡng</option>
+<option value="parts">Phụ tùng</option>
 <option value="insurance">Bảo hiểm TNDS</option>
+<option value="registration">Đăng kiểm</option>
+<option value="roadFee">Phí đường bộ</option>
 <option value="other">Khác</option>
 </select>
 </div>
@@ -256,7 +265,10 @@
 <option value="charge">Sạc xe</option>
 <option value="batteryRental">Thuê pin</option>
 <option value="maintenance">Bảo dưỡng</option>
+<option value="parts">Phụ tùng</option>
 <option value="insurance">Bảo hiểm TNDS</option>
+<option value="registration">Đăng kiểm</option>
+<option value="roadFee">Phí đường bộ</option>
 <option value="other">Khác</option>
 </select>
 </div>
@@ -304,11 +316,11 @@
 <small>Ứng dụng sẽ nhắc khi ODO đạt chu kỳ hoặc đến ngày bảo dưỡng — điều kiện nào đến trước.</small>
 </div>
 <div class="field insuranceOnly" style="display:none">
-<label>Đơn vị bảo hiểm</label>
+<label id="expiryProviderLabel">Đơn vị bảo hiểm</label>
 <input id="insuranceProvider" placeholder="VD: Bảo Việt">
 </div>
 <div class="field insuranceOnly" style="display:none">
-<label>Số giấy chứng nhận</label>
+<label id="expiryPolicyLabel">Số giấy chứng nhận</label>
 <input id="insurancePolicy" placeholder="Số hợp đồng/chứng nhận">
 </div>
 <div class="field insuranceOnly" style="display:none">
@@ -320,7 +332,7 @@
 <input id="insuranceExpiry" type="date">
 </div>
 <div class="field full insuranceOnly maintenanceHint" style="display:none">
-<small>Ứng dụng sẽ cảnh báo trên Tổng quan từ 45 ngày trước ngày hết hạn.</small>
+<small id="expiryHint">Ứng dụng sẽ cảnh báo trên Tổng quan từ 45 ngày trước ngày hết hạn.</small>
 </div>
 <div class="field full">
 <label>Ghi chú</label>
