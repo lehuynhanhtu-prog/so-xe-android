@@ -1,4 +1,4 @@
-SỔ XE WINDOWS PORTABLE 1.1.0
+SỔ XE WINDOWS PORTABLE 1.1.1
 ================================
 
 KHÔNG CẦN CÀI ĐẶT
@@ -20,4 +20,3 @@ LƯU Ý
 
 Nếu Windows chặn file BAT, bấm chuột phải vào file ZIP trước khi giải nén,
 chọn Properties (Thuộc tính) -> Unblock (Bỏ chặn) -> Apply.
-
