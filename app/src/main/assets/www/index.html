@@ -256,7 +256,7 @@
 </div>
 <div class="field">
 <label>Ngày *</label>
-<input id="expenseDate" type="date" required>
+<input id="expenseDate" class="date-dmy" type="text" inputmode="numeric" placeholder="dd/mm/yyyy" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" title="Nhập ngày dạng dd/mm/yyyy" maxlength="10" required>
 </div>
 <div class="field">
 <label>Loại chi phí *</label>
@@ -325,11 +325,11 @@
 </div>
 <div class="field insuranceOnly" style="display:none">
 <label>Ngày hiệu lực *</label>
-<input id="insuranceStart" type="date">
+<input id="insuranceStart" class="date-dmy" type="text" inputmode="numeric" placeholder="dd/mm/yyyy" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" title="Nhập ngày dạng dd/mm/yyyy" maxlength="10">
 </div>
 <div class="field insuranceOnly" style="display:none">
 <label>Ngày hết hạn *</label>
-<input id="insuranceExpiry" type="date">
+<input id="insuranceExpiry" class="date-dmy" type="text" inputmode="numeric" placeholder="dd/mm/yyyy" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" title="Nhập ngày dạng dd/mm/yyyy" maxlength="10">
 </div>
 <div class="field full insuranceOnly maintenanceHint" style="display:none">
 <small id="expiryHint">Ứng dụng sẽ cảnh báo trên Tổng quan từ 45 ngày trước ngày hết hạn.</small>
