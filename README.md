@@ -17,6 +17,12 @@ Sau lần build đầu tiên, mở Release mới nhất và tải `Android-OAuth
 
 Google Drive API phải được bật trong cùng dự án Google Cloud. OAuth Web đang dùng cho GitHub Pages không thay thế được OAuth Android.
 
+## Sao lưu JSON và tệp đính kèm
+
+Trong Cài đặt, chọn **Tải bản sao lưu JSON + ảnh (.zip)** sau khi kết nối Google Drive. Tệp ZIP có `so-xe-data.json`, `backup-manifest.json` và các tệp ứng dụng truy cập được trong thư mục Drive `Sổ xe`. Nếu không tải được một tệp, ứng dụng báo lỗi thay vì coi bản sao lưu là hoàn chỉnh. Giữ tệp ZIP ở nơi an toàn.
+
+Nút **Nhập dữ liệu JSON** chỉ nhập các bản ghi; nó chưa tự tải ảnh từ ZIP lên Drive hoặc đổi liên kết tệp trong các giao dịch. Tệp ZIP cho phép lấy lại ảnh/tệp gốc riêng biệt. Nút tải JSON cũ vẫn hoạt động khi không cần sao lưu ảnh.
+
 ## Chuyển dữ liệu từ bản cũ
 
 Trước khi cài bản 2.0, hãy mở bản web/bản Android cũ và chắc chắn trạng thái là **Đã đồng bộ Google Drive**. Bản 2.0 sẽ tải lại tệp Drive sau khi người dùng kết nối cùng tài khoản Google. Nên xuất thêm một bản JSON dự phòng.
