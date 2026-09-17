@@ -11,7 +11,7 @@ internal static class SoXeLauncher
 {
     private const int Port = 18765;
     private const string Origin = "http://127.0.0.1:18765/";
-    private const string HealthMarker = "SOXE_PORTABLE_1";
+    private const string HealthMarker = "SOXE_PORTABLE_1.1.9";
     private static string WebRoot;
     private static string DataRoot;
     private static string LogPath;
@@ -24,16 +24,29 @@ internal static class SoXeLauncher
             DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
             LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
             Directory.CreateDirectory(DataRoot);
-            Log("Bat dau khoi dong So Xe Windows Portable 1.1.8.");
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.9.");
 
             WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
             if (!File.Exists(Path.Combine(WebRoot, "index.html")))
                 throw new FileNotFoundException("Thieu thu muc www. Hay giai nen day du file ZIP roi chay lai.");
 
-            if (ServerIsRunning())
+            string runningMarker = RunningServerMarker();
+            if (runningMarker != null)
             {
-                OpenDefaultBrowser();
-                Log("Da mo cua so tu may chu dang chay.");
+                if (runningMarker == HealthMarker)
+                {
+                    OpenDefaultBrowser();
+                    Log("Da mo cua so tu may chu dung phien ban.");
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Ban So Xe Windows cu van dang chay. Hay dong SoXeLauncher.exe cu trong Task Manager, "
+                        + "sau do chay lai Chay-So-Xe.bat trong thu muc ban 1.1.9. "
+                        + "Du lieu tren trinh duyet va Google Drive van duoc giu nguyen.",
+                        "Can dong ban cu", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Log("Phat hien may chu phien ban cu. Khong mo giao dien cu.");
+                }
                 return;
             }
 
@@ -64,24 +77,27 @@ internal static class SoXeLauncher
         Process.Start(info);
     }
 
-    private static bool ServerIsRunning()
+    private static string RunningServerMarker()
     {
         try
         {
             using (TcpClient client = new TcpClient())
             {
                 IAsyncResult result = client.BeginConnect("127.0.0.1", Port, null, null);
-                if (!result.AsyncWaitHandle.WaitOne(800)) return false;
+                if (!result.AsyncWaitHandle.WaitOne(800)) return null;
                 client.EndConnect(result);
                 NetworkStream stream = client.GetStream();
                 byte[] request = Encoding.ASCII.GetBytes("GET /__soxe_health HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n");
                 stream.Write(request, 0, request.Length);
                 stream.ReadTimeout = 1200;
                 using (StreamReader reader = new StreamReader(stream))
-                    return reader.ReadToEnd().Contains(HealthMarker);
+                    { string response = reader.ReadToEnd();
+                        if (response.Contains(HealthMarker)) return HealthMarker;
+                        if (response.Contains("SOXE_PORTABLE_")) return "SOXE_PORTABLE_OLD";
+                        return null; }
             }
         }
-        catch { return false; }
+        catch { return null; }
     }
 
     private static void HandleRequest(TcpClient client)

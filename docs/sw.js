@@ -1,5 +1,5 @@
-const CACHE='so-xe-github-v33';
-const ASSETS=['./','./index.html','./downloads.html','./styles.css?v=23','./app.js?v=32','./backup-zip.js?v=1','./privacy.html','./terms.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png','./downloads/So-Xe-iOS.mobileconfig'];
+const CACHE='so-xe-github-v34';
+const ASSETS=['./','./index.html','./downloads.html','./styles.css?v=23','./app.js?v=33','./backup-zip.js?v=1','./privacy.html','./terms.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png','./downloads/So-Xe-iOS.mobileconfig'];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))) });
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))),self.clients.claim()])));
 self.addEventListener('fetch',event=>{if(event.request.method!=='GET'||new URL(event.request.url).origin!==location.origin)return;event.respondWith(fetch(event.request,{cache:'no-store'}).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('./index.html'))))});
