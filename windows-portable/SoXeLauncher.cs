@@ -11,7 +11,7 @@ internal static class SoXeLauncher
 {
     private const int Port = 18765;
     private const string Origin = "http://127.0.0.1:18765/";
-    private const string HealthMarker = "SOXE_PORTABLE_1.1.9";
+    private const string HealthMarker = "SOXE_PORTABLE_1.1.10";
     private static string WebRoot;
     private static string DataRoot;
     private static string LogPath;
@@ -24,29 +24,26 @@ internal static class SoXeLauncher
             DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
             LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
             Directory.CreateDirectory(DataRoot);
-            Log("Bat dau khoi dong So Xe Windows Portable 1.1.9.");
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.10.");
 
             WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
             if (!File.Exists(Path.Combine(WebRoot, "index.html")))
                 throw new FileNotFoundException("Thieu thu muc www. Hay giai nen day du file ZIP roi chay lai.");
 
             string runningMarker = RunningServerMarker();
-            if (runningMarker != null)
+            if (runningMarker == HealthMarker)
             {
-                if (runningMarker == HealthMarker)
-                {
-                    OpenDefaultBrowser();
-                    Log("Da mo cua so tu may chu dung phien ban.");
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "Ban So Xe Windows cu van dang chay. Hay dong SoXeLauncher.exe cu trong Task Manager, "
-                        + "sau do chay lai Chay-So-Xe.bat trong thu muc ban 1.1.9. "
-                        + "Du lieu tren trinh duyet va Google Drive van duoc giu nguyen.",
-                        "Can dong ban cu", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Log("Phat hien may chu phien ban cu. Khong mo giao dien cu.");
-                }
+                OpenDefaultBrowser();
+                Log("Da mo cua so tu may chu dung phien ban.");
+                return;
+            }
+            if (runningMarker != null && !TryStopOldServer())
+            {
+                MessageBox.Show(
+                    "Khong the tu dong dong may chu So Xe cu. Hay dong SoXeLauncher.exe cu "
+                    + "trong Task Manager, sau do chay lai Chay-So-Xe.bat ban 1.1.10. "
+                    + "Du lieu tren trinh duyet va Google Drive van duoc giu nguyen.",
+                    "Can dong ban cu", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -98,6 +95,50 @@ internal static class SoXeLauncher
             }
         }
         catch { return null; }
+    }
+
+    private static bool TryStopOldServer()
+    {
+        try
+        {
+            // Only stop the process listening on our loopback port after its health check
+            // identified an older So Xe server. Never stop another application on this port.
+            ProcessStartInfo info = new ProcessStartInfo("netstat.exe", "-ano -p tcp");
+            info.UseShellExecute = false;
+            info.RedirectStandardOutput = true;
+            info.CreateNoWindow = true;
+            string output;
+            using (Process netstat = Process.Start(info))
+            {
+                output = netstat.StandardOutput.ReadToEnd();
+                netstat.WaitForExit(5000);
+                if (netstat.ExitCode != 0) return false;
+            }
+            foreach (string line in output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string[] columns = System.Text.RegularExpressions.Regex.Split(line.Trim(), @"\s+");
+                if (columns.Length < 5 || columns[0] != "TCP"
+                    || columns[1] != "127.0.0.1:" + Port
+                    || !String.Equals(columns[3], "LISTENING", StringComparison.OrdinalIgnoreCase)) continue;
+                int pid;
+                if (!Int32.TryParse(columns[4], out pid) || pid == Process.GetCurrentProcess().Id)
+                    return false;
+                using (Process server = Process.GetProcessById(pid))
+                {
+                    if (!String.Equals(server.ProcessName, "SoXeLauncher", StringComparison.OrdinalIgnoreCase)
+                        || RunningServerMarker() != "SOXE_PORTABLE_OLD") return false;
+                    server.Kill();
+                    if (!server.WaitForExit(5000)) return false;
+                    Log("Da dong may chu So Xe cu PID " + pid + " de mo ban moi.");
+                    return true;
+                }
+            }
+        }
+        catch (Exception error)
+        {
+            TryLog("Khong dong duoc may chu cu: " + error.Message);
+        }
+        return false;
     }
 
     private static void HandleRequest(TcpClient client)
