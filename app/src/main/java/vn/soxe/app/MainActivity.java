@@ -351,7 +351,7 @@ public class MainActivity extends ComponentActivity {
 
         @JavascriptInterface
         public String appVersion() {
-            return "2.0.11";
+            return "2.0.12";
         }
     }
 

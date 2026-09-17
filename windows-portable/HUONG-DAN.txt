@@ -1,4 +1,4 @@
-SỔ XE WINDOWS PORTABLE 1.1.8
+SỔ XE WINDOWS PORTABLE 1.1.9
 ================================
 
 KHÔNG CẦN CÀI ĐẶT
@@ -25,3 +25,5 @@ LƯU Ý
 
 Nếu Windows chặn file BAT, bấm chuột phải vào file ZIP trước khi giải nén,
 chọn Properties (Thuộc tính) -> Unblock (Bỏ chặn) -> Apply.
+
+Neu ban cu van dang chay, dong SoXeLauncher.exe cu trong Task Manager, roi chay lai Chay-So-Xe.bat ban 1.1.9.
