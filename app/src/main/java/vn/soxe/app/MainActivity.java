@@ -37,6 +37,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,6 +50,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,6 +69,7 @@ public class MainActivity extends ComponentActivity {
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
     private String exportJson;
+    private String exportBackupJson;
     private volatile String currentAccessToken;
     private String attachmentFolderId;
     private PendingSync pendingSync;
@@ -72,6 +77,7 @@ public class MainActivity extends ComponentActivity {
     private ActivityResultLauncher<IntentSenderRequest> authorizationLauncher;
     private ActivityResultLauncher<Intent> fileChooserLauncher;
     private ActivityResultLauncher<String> exportLauncher;
+    private ActivityResultLauncher<String> backupLauncher;
 
     private static final class PendingSync {
         final String localJson;
@@ -137,6 +143,18 @@ public class MainActivity extends ComponentActivity {
                             runJs("window.nativeExportResult(false)");
                         }
                     });
+                });
+        backupLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("application/zip"),
+                uri -> {
+                    String content = exportBackupJson;
+                    exportBackupJson = null;
+                    if (uri == null || content == null) {
+                        runJs("window.nativeBackupResult(" + JSONObject.quote("Chưa lưu bản sao lưu.") + ")");
+                        return;
+                    }
+                    String token = currentAccessToken;
+                    ioExecutor.execute(() -> performBackup(token, content, uri));
                 });
     }
 
@@ -249,6 +267,19 @@ public class MainActivity extends ComponentActivity {
         @JavascriptInterface
         public void disconnect() {
             runOnUiThread(MainActivity.this::disconnectDrive);
+        }
+
+        @JavascriptInterface
+        public void exportBackup(String json) {
+            if (currentAccessToken == null || currentAccessToken.isEmpty()) {
+                runJs("window.nativeBackupResult(" + JSONObject.quote(
+                        "Hãy kết nối Google Drive trước khi sao lưu ảnh.") + ")");
+                return;
+            }
+            runOnUiThread(() -> {
+                exportBackupJson = json;
+                backupLauncher.launch("so-xe-backup-" + new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date()) + ".zip");
+            });
         }
 
         @JavascriptInterface
@@ -473,6 +504,113 @@ public class MainActivity extends ComponentActivity {
             }
             runJs("window.nativeAttachmentError(" + JSONObject.quote(error.getMessage() == null
                     ? "Không tải được tệp đính kèm lên Google Drive" : error.getMessage()) + ")");
+        }
+    }
+
+    private String backupFolder(String token) throws IOException, JSONException {
+        String q = URLEncoder.encode("name='" + ATTACHMENT_FOLDER
+                + "' and mimeType='application/vnd.google-apps.folder' and trashed=false", "UTF-8");
+        JSONObject result = new JSONObject(http(token, "GET",
+                "https://www.googleapis.com/drive/v3/files?q=" + q
+                        + "&spaces=drive&fields=files(id)&pageSize=100", null, null));
+        JSONArray files = result.optJSONArray("files");
+        return files == null || files.length() == 0 ? null : files.getJSONObject(0).getString("id");
+    }
+
+    private String backupPath(String id, String name) {
+        String clean = name == null ? "" : name.replaceAll("[\\\\/\\p{Cntrl}]", "_");
+        if (clean.isEmpty()) clean = "tep-dinh-kem";
+        if (clean.length() > 120) clean = clean.substring(0, 120);
+        return "So xe/" + id.replaceAll("[^a-zA-Z0-9_-]", "_") + "_" + clean;
+    }
+
+    private void putZipText(ZipOutputStream zip, String name, String content) throws IOException {
+        zip.putNextEntry(new ZipEntry(name));
+        zip.write(content.getBytes(StandardCharsets.UTF_8));
+        zip.closeEntry();
+    }
+
+    private void putDriveFile(ZipOutputStream zip, String token, String id, String path)
+            throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(
+                "https://www.googleapis.com/drive/v3/files/"
+                        + URLEncoder.encode(id, "UTF-8") + "?alt=media").openConnection();
+        connection.setConnectTimeout(20000);
+        connection.setReadTimeout(60000);
+        connection.setRequestProperty("Authorization", "Bearer " + token);
+        try {
+            int status = connection.getResponseCode();
+            if (status < 200 || status >= 300) {
+                throw new HttpStatusException(status,
+                        driveErrorMessage(status, readAll(connection.getErrorStream())));
+            }
+            zip.putNextEntry(new ZipEntry(path));
+            try (InputStream input = new BufferedInputStream(connection.getInputStream())) {
+                byte[] buffer = new byte[65536];
+                int count;
+                while ((count = input.read(buffer)) != -1) zip.write(buffer, 0, count);
+            }
+            zip.closeEntry();
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    private void performBackup(String token, String json, Uri uri) {
+        try {
+            JSONObject manifest = new JSONObject().put("format", "so-xe-backup")
+                    .put("version", 1)
+                    .put("exportedAt", new java.util.Date().toString());
+            JSONArray listed = new JSONArray();
+            String folderId = backupFolder(token);
+            try (OutputStream output = getContentResolver().openOutputStream(uri)) {
+                if (output == null) throw new IOException("Không mở được tệp sao lưu");
+                try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(output))) {
+                    putZipText(zip, "so-xe-data.json", json);
+                    if (folderId != null) {
+                        String page = "";
+                        do {
+                            String q = URLEncoder.encode("'" + folderId
+                                    + "' in parents and trashed=false", "UTF-8");
+                            String fields = URLEncoder.encode(
+                                    "nextPageToken,files(id,name,mimeType,size)", "UTF-8");
+                            String address = "https://www.googleapis.com/drive/v3/files?q=" + q
+                                    + "&spaces=drive&fields=" + fields + "&pageSize=1000"
+                                    + (page.isEmpty() ? "" : "&pageToken="
+                                    + URLEncoder.encode(page, "UTF-8"));
+                            JSONObject result = new JSONObject(
+                                    http(token, "GET", address, null, null));
+                            JSONArray files = result.optJSONArray("files");
+                            if (files != null) for (int i = 0; i < files.length(); i++) {
+                                JSONObject file = files.getJSONObject(i);
+                                if ("application/vnd.google-apps.folder".equals(
+                                        file.optString("mimeType"))) continue;
+                                String id = file.getString("id");
+                                String name = file.optString("name", "tep-dinh-kem");
+                                String path = backupPath(id, name);
+                                putDriveFile(zip, token, id, path);
+                                listed.put(new JSONObject()
+                                        .put("driveFileId", id).put("name", name)
+                                        .put("path", path)
+                                        .put("mimeType", file.optString("mimeType"))
+                                        .put("size", file.optLong("size")));
+                            }
+                            page = result.optString("nextPageToken");
+                        } while (!page.isEmpty());
+                    }
+                    manifest.put("files", listed);
+                    putZipText(zip, "backup-manifest.json", manifest.toString(2));
+                }
+            }
+            runJs("window.nativeBackupResult(" + JSONObject.quote(
+                    "Đã lưu JSON và " + listed.length() + " tệp từ Drive vào ZIP.") + ")");
+        } catch (Exception error) {
+            if (error instanceof HttpStatusException
+                    && ((HttpStatusException) error).status == 401) clearInvalidToken(token);
+            runJs("window.nativeBackupResult(" + JSONObject.quote(
+                    "Sao lưu thất bại: " + (error.getMessage() == null
+                            ? "không đọc được tệp trên Drive" : error.getMessage())
+                            + ". Không dùng tệp ZIP chưa hoàn chỉnh.") + ")");
         }
     }
 
