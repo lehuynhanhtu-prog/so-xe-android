@@ -278,6 +278,36 @@ public class MainActivity extends ComponentActivity {
         }
 
         @JavascriptInterface
+        public void deleteAttachment(String fileId, String requestId) {
+            String token = currentAccessToken;
+            if (token == null || token.isEmpty()) {
+                runJs("window.nativeAttachmentDeleteError(" + JSONObject.quote(requestId) + ","
+                        + JSONObject.quote("Hãy kết nối Google Drive trước khi xóa tệp.") + ")");
+                return;
+            }
+            ioExecutor.execute(() -> {
+                try {
+                    http(token, "DELETE", "https://www.googleapis.com/drive/v3/files/"
+                            + URLEncoder.encode(fileId, "UTF-8"), null, null);
+                    runJs("window.nativeAttachmentDeleted(" + JSONObject.quote(requestId) + ")");
+                } catch (Exception error) {
+                    if (error instanceof HttpStatusException
+                            && ((HttpStatusException) error).status == 404) {
+                        runJs("window.nativeAttachmentDeleted(" + JSONObject.quote(requestId) + ")");
+                        return;
+                    }
+                    if (error instanceof HttpStatusException
+                            && ((HttpStatusException) error).status == 401) {
+                        clearInvalidToken(token);
+                    }
+                    runJs("window.nativeAttachmentDeleteError(" + JSONObject.quote(requestId) + ","
+                            + JSONObject.quote(error.getMessage() == null
+                                    ? "Không xóa được tệp trên Google Drive" : error.getMessage()) + ")");
+                }
+            });
+        }
+
+        @JavascriptInterface
         public void openUrl(String url) {
             runOnUiThread(() -> {
                 try {
