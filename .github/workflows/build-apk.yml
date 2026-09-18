@@ -48,10 +48,10 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           gradle --no-daemon :app:assembleRelease
-          cp app/build/outputs/apk/release/app-release.apk So-Xe-Android-2.0.14.apk
+          cp app/build/outputs/apk/release/app-release.apk So-Xe-Android-2.0.15.apk
       - name: Verify package and permanent signature
         run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs So-Xe-Android-2.0.14.apk > apk-signature.txt
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs So-Xe-Android-2.0.15.apk > apk-signature.txt
           cat apk-signature.txt
           RAW_SHA1=$(sed -n 's/^Signer #1 certificate SHA-1 digest: //p' apk-signature.txt | head -1 | tr -d ':[:space:]' | tr '[:lower:]' '[:upper:]')
           ACTUAL_SHA1=$(printf '%s' "$RAW_SHA1" | sed 's/../&:/g; s/:$//')
@@ -62,7 +62,7 @@ jobs:
           fi
           {
             echo "Package name: vn.soxe.app"
-            echo "Version: 2.0.14 (versionCode 19)"
+            echo "Version: 2.0.15 (versionCode 20)"
             echo "SHA-1: $ACTUAL_SHA1"
             echo "Đây là chữ ký release cố định dùng cho các bản cập nhật sau."
           } > Android-OAuth-SHA1.txt
@@ -71,17 +71,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view v2.0.14 >/dev/null 2>&1; then
-            gh release upload v2.0.14 So-Xe-Android-2.0.14.apk Android-OAuth-SHA1.txt --clobber
+          if gh release view v2.0.15 >/dev/null 2>&1; then
+            gh release upload v2.0.15 So-Xe-Android-2.0.15.apk Android-OAuth-SHA1.txt --clobber
           else
-            gh release create v2.0.14 So-Xe-Android-2.0.14.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.14" --notes "Xem giấy chủ quyền xe ngay trong mục Xe của tôi. Cài đè lên bản cũ để giữ dữ liệu."
+            gh release create v2.0.15 So-Xe-Android-2.0.15.apk Android-OAuth-SHA1.txt --target "$GITHUB_SHA" --title "Sổ Xe Android 2.0.15" --notes "Nhấp nhắc hạn để xem giao dịch; tóm tắt hồ sơ trên từng xe. Cài đè lên bản cũ để giữ dữ liệu."
           fi
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: So-Xe-Android-2.0.14-release
+          name: So-Xe-Android-2.0.15-release
           path: |
-            So-Xe-Android-2.0.14.apk
+            So-Xe-Android-2.0.15.apk
             Android-OAuth-SHA1.txt
             apk-signature.txt
           if-no-files-found: error
