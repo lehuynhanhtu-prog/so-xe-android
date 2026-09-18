@@ -11,7 +11,7 @@ internal static class SoXeLauncher
 {
     private const int Port = 18765;
     private const string Origin = "http://127.0.0.1:18765/";
-    private const string HealthMarker = "SOXE_PORTABLE_1.1.10";
+    private const string HealthMarker = "SOXE_PORTABLE_1.1.11";
     private static string WebRoot;
     private static string DataRoot;
     private static string LogPath;
@@ -24,7 +24,7 @@ internal static class SoXeLauncher
             DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SoXeData");
             LogPath = Path.Combine(DataRoot, "SoXeLauncher.log");
             Directory.CreateDirectory(DataRoot);
-            Log("Bat dau khoi dong So Xe Windows Portable 1.1.10.");
+            Log("Bat dau khoi dong So Xe Windows Portable 1.1.11.");
 
             WebRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "www"));
             if (!File.Exists(Path.Combine(WebRoot, "index.html")))
@@ -41,7 +41,7 @@ internal static class SoXeLauncher
             {
                 MessageBox.Show(
                     "Khong the tu dong dong may chu So Xe cu. Hay dong SoXeLauncher.exe cu "
-                    + "trong Task Manager, sau do chay lai Chay-So-Xe.bat ban 1.1.10. "
+                    + "trong Task Manager, sau do chay lai Chay-So-Xe.bat ban 1.1.11. "
                     + "Du lieu tren trinh duyet va Google Drive van duoc giu nguyen.",
                     "Can dong ban cu", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;

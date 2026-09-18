@@ -40,6 +40,8 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +52,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,6 +85,7 @@ public class MainActivity extends ComponentActivity {
     private ActivityResultLauncher<Intent> fileChooserLauncher;
     private ActivityResultLauncher<String> exportLauncher;
     private ActivityResultLauncher<String> backupLauncher;
+    private ActivityResultLauncher<String[]> restoreLauncher;
 
     private static final class PendingSync {
         final String localJson;
@@ -155,6 +163,16 @@ public class MainActivity extends ComponentActivity {
                     }
                     String token = currentAccessToken;
                     ioExecutor.execute(() -> performBackup(token, content, uri));
+                });
+        restoreLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri == null) {
+                        runJs("window.nativeBackupRestoreError(" + JSONObject.quote("Đã hủy khôi phục.") + ")");
+                        return;
+                    }
+                    String token = currentAccessToken;
+                    ioExecutor.execute(() -> performRestore(token, uri));
                 });
     }
 
@@ -270,6 +288,17 @@ public class MainActivity extends ComponentActivity {
         }
 
         @JavascriptInterface
+        public void restoreBackup() {
+            if (currentAccessToken == null || currentAccessToken.isEmpty()) {
+                runJs("window.nativeBackupRestoreError(" + JSONObject.quote(
+                        "Hãy kết nối Google Drive trước khi khôi phục.") + ")");
+                return;
+            }
+            runOnUiThread(() -> restoreLauncher.launch(new String[]{
+                    "application/zip", "application/x-zip-compressed", "application/octet-stream"}));
+        }
+
+        @JavascriptInterface
         public void exportBackup(String json) {
             if (currentAccessToken == null || currentAccessToken.isEmpty()) {
                 runJs("window.nativeBackupResult(" + JSONObject.quote(
@@ -351,7 +380,7 @@ public class MainActivity extends ComponentActivity {
 
         @JavascriptInterface
         public String appVersion() {
-            return "2.0.12";
+            return "2.0.13";
         }
     }
 
@@ -504,6 +533,163 @@ public class MainActivity extends ComponentActivity {
             }
             runJs("window.nativeAttachmentError(" + JSONObject.quote(error.getMessage() == null
                     ? "Không tải được tệp đính kèm lên Google Drive" : error.getMessage()) + ")");
+        }
+    }
+
+    private static final class RestoreEntry {
+        final String id, name, mimeType;
+        final File file;
+        RestoreEntry(String id, String name, String mimeType, File file) {
+            this.id=id;this.name=name;this.mimeType=mimeType;this.file=file;
+        }
+    }
+
+    private String uploadRestoredFile(String token, String folderId, RestoreEntry item)
+            throws IOException, JSONException {
+        String boundary="soxe-restore-"+System.currentTimeMillis();
+        String type=item.mimeType.matches("[a-zA-Z0-9.+-]+/[a-zA-Z0-9.+-]+")
+                ? item.mimeType : "application/octet-stream";
+        JSONObject meta=new JSONObject().put("name",item.name)
+                .put("parents",new JSONArray().put(folderId));
+        byte[] prefix=("--"+boundary+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"
+                +meta+"\r\n--"+boundary+"\r\nContent-Type: "+type+"\r\n\r\n")
+                .getBytes(StandardCharsets.UTF_8);
+        byte[] suffix=("\r\n--"+boundary+"--").getBytes(StandardCharsets.UTF_8);
+        HttpURLConnection connection=(HttpURLConnection)new URL(
+                "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id")
+                .openConnection();
+        connection.setConnectTimeout(20000);
+        connection.setReadTimeout(60000);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization","Bearer "+token);
+        connection.setRequestProperty("Content-Type","multipart/related; boundary="+boundary);
+        connection.setFixedLengthStreamingMode((long)prefix.length+item.file.length()+suffix.length);
+        connection.setDoOutput(true);
+        try {
+            try (OutputStream out=connection.getOutputStream();
+                    InputStream input=new BufferedInputStream(new java.io.FileInputStream(item.file))) {
+                out.write(prefix);
+                byte[] buffer=new byte[65536];int count;
+                while((count=input.read(buffer))!=-1)out.write(buffer,0,count);
+                out.write(suffix);
+            }
+            int status=connection.getResponseCode();
+            String response=readAll(status>=200&&status<300
+                    ?connection.getInputStream():connection.getErrorStream());
+            if(status<200||status>=300)throw new HttpStatusException(status,driveErrorMessage(status,response));
+            return new JSONObject(response).getString("id");
+        }finally{connection.disconnect();}
+    }
+
+    private void relinkRecords(JSONObject restored, Map<String,String> ids)
+            throws JSONException, IOException {
+        for(String kind:new String[]{"cars","expenses"}){
+            JSONArray records=restored.getJSONArray(kind);
+            for(int i=0;i<records.length();i++){
+                JSONArray attachments=records.getJSONObject(i).optJSONArray("attachments");
+                if(attachments==null)continue;
+                for(int j=0;j<attachments.length();j++){
+                    JSONObject item=attachments.getJSONObject(j);
+                    String old=item.optString("driveFileId");
+                    if(!old.isEmpty()){
+                        if(!ids.containsKey(old))throw new IOException("ZIP thiếu tệp đính kèm "+old);
+                        item.put("driveFileId",ids.get(old));
+                        item.remove("webViewLink");
+                    }
+                }
+            }
+        }
+    }
+
+    private void performRestore(String token, Uri uri) {
+        File temp=new File(getCacheDir(),"soxe-restore-"+System.currentTimeMillis());
+        Map<String,File> zipFiles=new HashMap<>();
+        java.util.List<String> uploaded=new java.util.ArrayList<>();
+        boolean savingDrive=false;
+        try{
+            if(token==null||token.isEmpty())throw new IOException("Hãy kết nối Google Drive trước khi khôi phục.");
+            if(!temp.mkdirs())throw new IOException("Không tạo được thư mục tạm.");
+            String json=null,manifestJson=null;
+            long total=0;int count=0;
+            try(InputStream source=getContentResolver().openInputStream(uri);
+                    ZipInputStream zip=new ZipInputStream(new BufferedInputStream(source))){
+                ZipEntry entry;byte[] buffer=new byte[65536];
+                while((entry=zip.getNextEntry())!=null){
+                    if(entry.isDirectory()){zip.closeEntry();continue;}
+                    String path=entry.getName();
+                    if(!path.equals("so-xe-data.json")&&!path.equals("backup-manifest.json")
+                            &&!path.startsWith("So xe/"))throw new IOException("ZIP chứa đường dẫn không hợp lệ.");
+                    if(zipFiles.containsKey(path)||++count>10000)throw new IOException("ZIP có tệp trùng hoặc quá nhiều tệp.");
+                    File staged=new File(temp,String.valueOf(count));
+                    try(OutputStream output=new FileOutputStream(staged)){
+                        int n;long size=0;
+                        while((n=zip.read(buffer))!=-1){
+                            size+=n;total+=n;
+                            if(size>200L*1024*1024||total>2L*1024*1024*1024)
+                                throw new IOException("ZIP vượt giới hạn dung lượng khôi phục.");
+                            output.write(buffer,0,n);
+                        }
+                    }
+                    zipFiles.put(path,staged);
+                    if(path.equals("so-xe-data.json")||path.equals("backup-manifest.json")){
+                        if(staged.length()>20L*1024*1024)throw new IOException("JSON quá lớn.");
+                        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+                        try(InputStream input=new java.io.FileInputStream(staged)){
+                            int n;while((n=input.read(buffer))!=-1)bytes.write(buffer,0,n);
+                        }
+                        String text=new String(bytes.toByteArray(),StandardCharsets.UTF_8);
+                        if(path.equals("so-xe-data.json"))json=text;else manifestJson=text;
+                    }
+                    zip.closeEntry();
+                }
+            }
+            if(json==null||manifestJson==null)throw new IOException("ZIP thiếu JSON hoặc danh sách tệp.");
+            JSONObject restored=new JSONObject(json),manifest=new JSONObject(manifestJson);
+            if(!restored.has("cars")||!restored.has("expenses")
+                    ||!"so-xe-backup".equals(manifest.optString("format"))
+                    ||manifest.optInt("version")!=1)throw new IOException("ZIP không phải bản sao lưu Sổ Xe hợp lệ.");
+            JSONArray files=manifest.getJSONArray("files");
+            Set<String> oldIds=new HashSet<>(),usedPaths=new HashSet<>();
+            java.util.List<RestoreEntry> entries=new java.util.ArrayList<>();
+            for(int i=0;i<files.length();i++){
+                JSONObject item=files.getJSONObject(i);
+                String id=item.getString("driveFileId"),path=item.getString("path"),name=item.getString("name");
+                if(!path.startsWith("So xe/")||!oldIds.add(id)||!usedPaths.add(path)
+                        ||!zipFiles.containsKey(path))throw new IOException("ZIP thiếu hoặc trùng tệp "+name);
+                entries.add(new RestoreEntry(id,name,item.optString("mimeType"),zipFiles.get(path)));
+            }
+            // Verify references before making any changes to Drive.
+            Map<String,String> expected=new HashMap<>();
+            for(String id:oldIds)expected.put(id,id);
+            relinkRecords(new JSONObject(json),expected);
+            Map<String,String> ids=new HashMap<>();
+            String folderId=entries.isEmpty()?null:findOrCreateAttachmentFolder(token);
+            for(RestoreEntry item:entries){
+                String fresh=uploadRestoredFile(token,folderId,item);
+                uploaded.add(fresh);ids.put(item.id,fresh);
+            }
+            relinkRecords(restored,ids);
+            String result=restored.toString();
+            DriveFile remote=findDriveFile(token);
+            savingDrive=true;
+            if(remote==null)createDriveFile(token,result);
+            else updateDriveFile(token,remote.id,result);
+            uploaded.clear(); // New files now belong to the restored data.
+            runJs("window.nativeBackupRestored("+JSONObject.quote(result)+")");
+        }catch(Exception error){
+            if(!savingDrive)for(String id:uploaded)try{
+                http(token,"DELETE","https://www.googleapis.com/drive/v3/files/"
+                        +URLEncoder.encode(id,"UTF-8"),null,null);
+            }catch(Exception ignored){}
+            if(error instanceof HttpStatusException
+                    &&((HttpStatusException)error).status==401)clearInvalidToken(token);
+            String message=error.getMessage()==null?"Không khôi phục được ZIP":error.getMessage();
+            if(savingDrive)message+=" Hãy kiểm tra dữ liệu trên Drive trước khi thử lại.";
+            runJs("window.nativeBackupRestoreError("+JSONObject.quote(message)+")");
+        }finally{
+            File[] staged=temp.listFiles();
+            if(staged!=null)for(File file:staged)file.delete();
+            temp.delete();
         }
     }
 
