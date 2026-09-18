@@ -37,6 +37,10 @@ https://lehuynhanhtu-prog.github.io/so-xe-android/
 
 Mã GitHub Pages nằm trong `docs/` và tiếp tục hoạt động độc lập với APK.
 
+## Cài trên iPhone / iPad bằng Safari
+
+Mở https://lehuynhanhtu-prog.github.io/so-xe-android/ trong Safari, chọn Chia sẻ → Thêm vào Màn hình chính → Mở dưới dạng ứng dụng web → Thêm. Mở biểu tượng Sổ Xe và kết nối Google Drive trong ứng dụng để đồng bộ dữ liệu. Không cần cài hồ sơ cấu hình.
+
 ## Bản Windows portable gọn nhẹ
 
 Mã khởi chạy nằm trong `windows-portable/`. Quy trình GitHub Actions biên dịch bộ khởi chạy gọn nhẹ và tạo file `So-Xe-Windows-Portable-1.1.13.zip`. Giải nén rồi chạy; bản 1.1.13 tự đóng máy chủ Sổ Xe cũ đang chạy nếu xác minh đúng tiến trình, sau đó mở bản mới. Nếu Windows chặn thao tác này, đóng SoXeLauncher.exe cũ trong Task Manager rồi chạy lại `Chay-So-Xe.bat`; không cần PowerShell hay setup. Ứng dụng mở bằng trình duyệt mặc định để nhận sẵn các tài khoản Google đã lưu trong trình duyệt và vẫn sử dụng được khi không có Internet.
