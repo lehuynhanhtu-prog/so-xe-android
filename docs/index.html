@@ -250,6 +250,9 @@
 <small id="backupStatus" role="status">ZIP chứa JSON và các tệp trong thư mục Sổ xe. Cần kết nối Drive; chức năng Nhập JSON không tự tải lại ảnh từ ZIP.</small>
 <label class="btn" for="importFile">Nhập dữ liệu JSON</label>
 <input class="fileinput" type="file" id="importFile" accept="application/json">
+<label class="btn primary" for="restoreBackupFile">Khôi phục JSON + ảnh từ ZIP</label>
+<input class="fileinput" type="file" id="restoreBackupFile" accept=".zip,application/zip">
+<small id="restoreStatus" role="status">Khôi phục ZIP sẽ thay dữ liệu hiện tại sau khi tải ảnh lên Google Drive. Hãy sao lưu dữ liệu hiện tại trước.</small>
 </div>
 </div>
 </div>
@@ -420,6 +423,12 @@
 <label>Năm sản xuất</label>
 <input id="carYear" type="number" min="1950">
 </div>
+<div class="field full attachment-field">
+<label>Giấy chủ quyền xe (ảnh hoặc PDF, tối đa 15 MB/tệp)</label>
+<input id="carAttachments" type="file" accept="image/*,application/pdf" multiple>
+<div id="selectedCarAttachments" class="attachment-list"></div>
+<div id="existingCarAttachments" class="attachment-list"></div>
+</div>
 </div>
 </div>
 <div class="modalfoot">
@@ -431,7 +440,9 @@
 <div class="toast" id="toast">
 </div>
 <script src="backup-zip.js?v=1"></script>
-<script src="app.js?v=33">
+<script src="jszip.min.js?v=1"></script>
+<script src="app.js?v=35">
 </script>
+<script src="backup-restore.js"></script>
 </body>
 </html>
