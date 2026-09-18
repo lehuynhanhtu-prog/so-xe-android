@@ -39,7 +39,7 @@ Mã GitHub Pages nằm trong `docs/` và tiếp tục hoạt động độc lậ
 
 ## Cài trên iPhone / iPad bằng Safari
 
-Mở https://lehuynhanhtu-prog.github.io/so-xe-android/ trong Safari, chọn Chia sẻ → Thêm vào Màn hình chính → Mở dưới dạng ứng dụng web → Thêm. Mở biểu tượng Sổ Xe và kết nối Google Drive trong ứng dụng để đồng bộ dữ liệu. Không cần cài hồ sơ cấu hình.
+Tải tệp `docs/downloads/So-Xe-iOS.mobileconfig` từ trang tải bằng Safari, vào Cài đặt → Đã tải về hồ sơ → Cài đặt. Hồ sơ chỉ thêm Web Clip Sổ Xe toàn màn hình, không phải ứng dụng IPA native; không cần tài khoản Apple Developer. Mở biểu tượng Sổ Xe và kết nối Google Drive trong ứng dụng để đồng bộ dữ liệu. Cũng có thể mở https://lehuynhanhtu-prog.github.io/so-xe-android/ trong Safari và chọn Chia sẻ → Thêm vào Màn hình chính nếu không muốn cài hồ sơ.
 
 ## Bản Windows portable gọn nhẹ
 
