@@ -227,16 +227,22 @@
 <button class="btn" id="disconnectDrive">Ngắt kết nối</button>
 </div>
 </div>
-<div class="field full">
-<label>Sao lưu thủ công</label>
-<div class="actions">
-<button class="btn" id="exportBtn">Tải dữ liệu JSON</button>
-<button class="btn primary" id="backupBtn">Tải bản sao lưu JSON + ảnh (.zip)</button>
-<small id="backupStatus" role="status">ZIP chứa JSON và các tệp trong thư mục Sổ xe. Cần kết nối Drive; chức năng Nhập JSON không tự tải lại ảnh từ ZIP.</small>
-<label class="btn" for="importFile">Nhập dữ liệu JSON</label>
+<div class="field full backup-section">
+<div class="backup-heading"><div><label>Sao lưu thủ công</label><small>Tải bản dự phòng hoặc phục hồi dữ liệu khi chuyển thiết bị.</small></div><span class="backup-safe">✓ Dữ liệu của anh</span></div>
+<div class="backup-grid">
+<section class="backup-panel">
+<div class="backup-panel-title"><span class="backup-icon">↓</span><div><b>Sao lưu dữ liệu</b><small>Nên dùng bản ZIP đầy đủ để giữ cả ảnh và tệp đính kèm.</small></div></div>
+<button class="btn primary backup-main-action" id="backupBtn">Tải bản sao lưu đầy đủ (.zip)</button>
+<small id="backupStatus" class="backup-status" role="status">Bao gồm dữ liệu JSON và các tệp trong thư mục Sổ xe. Cần kết nối Google Drive.</small>
+<div class="backup-secondary"><span>Chỉ cần dữ liệu cơ bản?</span><button class="btn" id="exportBtn">Tải riêng file JSON</button></div>
+</section>
+<section class="backup-panel restore-panel">
+<div class="backup-panel-title"><span class="backup-icon restore">↥</span><div><b>Phục hồi dữ liệu</b><small>Hãy tạo một bản sao lưu hiện tại trước khi phục hồi.</small></div></div>
+<button class="btn primary backup-main-action" id="restoreBackupBtn" type="button">Chọn bản sao lưu ZIP để phục hồi</button>
+<small id="restoreStatus" class="backup-status warning" role="status">Dữ liệu hiện tại sẽ được thay sau khi ảnh được tải lên Google Drive thành công.</small>
+<div class="backup-secondary"><span>File JSON cũ?</span><label class="btn" for="importFile">Nhập file JSON</label></div>
 <input class="fileinput" type="file" id="importFile" accept="application/json">
-<button class="btn primary" id="restoreBackupBtn" type="button">Khôi phục JSON + ảnh từ ZIP</button>
-<small id="restoreStatus" role="status">Khôi phục ZIP sẽ thay dữ liệu hiện tại sau khi tải ảnh lên Google Drive. Hãy sao lưu dữ liệu hiện tại trước.</small>
+</section>
 </div>
 </div>
 </div>
@@ -423,7 +429,7 @@
 </dialog>
 <div class="toast" id="toast">
 </div>
-<script src="app.js?v=2.0.15">
+<script src="app.js?v=2.0.16">
 </script>
 <script src="backup-restore.js"></script>
 </body>
