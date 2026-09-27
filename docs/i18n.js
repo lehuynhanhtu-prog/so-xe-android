@@ -51,7 +51,58 @@
     'Xe này chưa có dữ liệu chi phí':'This vehicle has no expense data','Không tìm thấy dữ liệu':'No data found','Ô tô':'Vehicle','Bảo hiểm':'Insurance',
     'Đơn vị bảo hiểm':'Insurance provider','Số giấy chứng nhận':'Certificate number','Đơn vị đăng kiểm':'Inspection centre','Số tem/giấy đăng kiểm':'Inspection certificate number',
     'Đơn vị thu phí':'Fee collection agency','Số biên lai/tem phí':'Receipt/sticker number','Số hợp đồng/chứng nhận':'Policy/certificate number'
+    ,'Dữ liệu nằm trong ứng dụng và có thể đồng bộ Google Drive':'Data is stored in the app and can be synced with Google Drive'
+    ,'Nhấn nút bên dưới và chọn tài khoản Google. Sau lần đầu cấp quyền, ứng dụng sẽ tự đồng bộ ngay sau mỗi thay đổi.':'Select the button below and choose a Google account. After the initial authorization, the app will sync automatically after every change.'
+    ,'Ứng dụng đã được cấu hình sẵn. Chỉ cần nhấn nút bên dưới và chọn tài khoản Google; không phải nhập OAuth Client ID.':'The app is preconfigured. Select the button below and choose a Google account; no OAuth Client ID is required.'
+    ,'Tổng chi tháng này':'Total expenses this month','Xăng / Sạc / Thuê pin':'Fuel / Charging / Battery rental'
+    ,'Mức tiêu hao giữa hai lần đổ xăng':'Fuel consumption between refuels','Toàn thời gian:':'All time:'
+    ,'ODO giữa các kỳ Sạc xe / Thuê pin':'Odometer between charging / battery rental entries'
+    ,'Mỗi loại được so với kỳ trước gần nhất của chính loại đó để không cộng trùng quãng đường.':'Each type is compared with its own previous entry to avoid counting the same distance twice.'
+    ,'chưa đủ dữ liệu':'insufficient data','Chưa nhập năm sản xuất':'Model year not entered'
+    ,'Dữ liệu được lưu trong tệp ':'Data is stored in the file '
+    ,' ở vùng riêng. Tệp đính kèm do ứng dụng tạo nằm trong thư mục ':' in private app storage. Attachments created by the app are stored in the '
+    ,' trên Google Drive của người dùng.':' folder in the user’s Google Drive.'
+    ,'Đã tải dữ liệu từ Google Drive':'Data loaded from Google Drive','Đã nhận dữ liệu từ Google Drive':'Data received from Google Drive'
+    ,'Đã đồng bộ Google Drive':'Google Drive synced','Đã tự động đồng bộ Google Drive':'Google Drive synced automatically'
+    ,'Đang kết nối Google Drive…':'Connecting to Google Drive…','Đang tự động đồng bộ…':'Syncing automatically…','Đang đồng bộ…':'Syncing…'
+    ,'Đã kết nối · đang đồng bộ…':'Connected · syncing…','Có thay đổi mới · đang đồng bộ tiếp':'New changes · continuing sync'
+    ,'Chưa kết nối Drive':'Drive not connected','Đã ngắt kết nối Drive':'Drive disconnected','Đồng bộ thất bại':'Sync failed'
+    ,'Dữ liệu vẫn được lưu trên điện thoại':'Data remains stored on this phone','Không đọc được dữ liệu Drive':'Could not read Drive data'
+    ,'Đã lưu trên điện thoại · Drive chưa sẵn sàng':'Saved on phone · Drive is not ready','Phiên bản này chưa hỗ trợ đồng bộ Drive':'This version does not support Drive sync'
+    ,'Bao gồm dữ liệu JSON và các tệp trong thư mục Sổ xe. Cần kết nối Google Drive.':'Includes JSON data and files in the Sổ xe folder. Google Drive connection required.'
+    ,'Ảnh, PDF, Word, Excel và các tệp thông dụng; tối đa 15 MB mỗi tệp. Tệp được lưu trong thư mục “Sổ xe” trên Google Drive.':'Images, PDF, Word, Excel and common file types; up to 15 MB each. Files are stored in the “Sổ xe” folder on Google Drive.'
   };
+
+  Object.assign(EN, {
+    'Có thay đổi chưa đồng bộ':'Unsynced changes','Đã lưu ngoại tuyến · chờ có mạng':'Saved offline · waiting for connection',
+    'Đã lưu trên máy. Sẽ tự đồng bộ khi có mạng':'Saved locally · will sync when online','Đã lưu trên máy · đang kết nối Drive':'Saved locally · connecting to Drive',
+    'Đã lưu trên máy · chưa kết nối Drive':'Saved locally · Drive not connected','Đã lưu trên máy. Hãy kết nối Google Drive một lần':'Saved locally · connect Google Drive once to enable sync',
+    '⚡ Xe điện':'⚡ Electric','⚡⛽ Xe Điện-Xăng':'⚡⛽ Hybrid','⛽ Xe xăng/dầu':'⛽ Petrol/Diesel','Xe chưa có ODO tham chiếu.':'No reference odometer is available.',
+    'Tất cả xe':'All vehicles','VD: Trung tâm đăng kiểm':'e.g. Inspection centre','VD: Đơn vị thu phí':'e.g. Fee collection agency','VD: Bảo Việt':'e.g. Insurance provider',
+    'Cần kết nối Internet để tải tệp đính kèm lên Google Drive. Giao dịch chưa được lưu.':'Internet connection is required to upload attachments to Google Drive. The transaction has not been saved.',
+    'Hãy vào Cài đặt, kết nối Google Drive và chờ đồng bộ xong trước khi đính kèm tệp.':'Open Settings, connect Google Drive and wait for sync to finish before attaching files.',
+    'Hãy kết nối Google Drive trước khi đính kèm tệp.':'Connect Google Drive before attaching files.','Đã lưu tệp đính kèm lên Google Drive':'Attachment saved to Google Drive',
+    'Không tải được tệp đính kèm':'Could not upload attachment','Không đọc được thông tin tệp từ Google Drive':'Could not read file information from Google Drive',
+    'Chưa kết nối Google Drive':'Google Drive not connected','Đã xóa tệp đính kèm trên Google Drive':'Attachment deleted from Google Drive','Không xóa được tệp đính kèm':'Could not delete attachment',
+    'Cần ít nhất hai lần đổ xăng có ODO và số lít':'At least two refuels with odometer and litre values are required',
+    'Cần ít nhất hai kỳ cùng loại Sạc xe hoặc Thuê pin có ODO':'At least two entries of the same Charging or Battery rental type with odometer values are required',
+    'Lưu chi phí':'Save expense','Thêm xe':'Add vehicle','Đang xóa tệp trên Google Drive, hãy chờ hoàn tất':'Deleting file from Google Drive; please wait',
+    'Ngày giao dịch':'Transaction date','Ngày hiệu lực':'Effective date','Ngày hết hạn':'Expiry date','Xe điện không sử dụng loại chi phí Đổ xăng.':'Electric vehicles cannot use the Refueling expense type.',
+    'Phần trăm pin sau khi sạc phải lớn hơn phần trăm pin trước khi sạc và nằm trong khoảng 0–100%.':'Battery percentage after charging must be greater than before charging and within 0–100%.',
+    'Đã cập nhật giao dịch':'Transaction updated','Đã lưu chi phí':'Expense saved','Đã cập nhật xe và ODO':'Vehicle and odometer updated','Đã thêm xe':'Vehicle added',
+    'Sửa giao dịch':'Edit transaction','Cập nhật giao dịch':'Update transaction','Sửa thông tin xe':'Edit vehicle','Cập nhật xe':'Update vehicle','Xóa khoản chi này?':'Delete this expense?',
+    'Đã xóa giao dịch và tệp đính kèm · đang đồng bộ Drive':'Transaction and attachments deleted · syncing Drive','Đã xóa giao dịch · đang đồng bộ Drive':'Transaction deleted · syncing Drive',
+    'Không xóa được giao dịch trên Drive':'Could not delete transaction from Drive','Đã xóa xe và dữ liệu liên quan':'Vehicle and related data deleted','Không xóa được xe trên Drive':'Could not delete vehicle from Drive',
+    'Cần kết nối Internet để sao lưu ảnh từ Drive.':'Internet connection is required to back up Drive files.','Hãy kết nối Google Drive trước khi sao lưu ảnh.':'Connect Google Drive before backing up files.',
+    'Không tạo được bản sao lưu':'Could not create backup','Thay dữ liệu hiện tại bằng tệp đã chọn?':'Replace current data with the selected file?','Đã nhập dữ liệu':'Data imported','Tệp dữ liệu không hợp lệ':'Invalid data file',
+    'Phiên Google đã hết hạn':'Google session expired','Không đọc được Google Drive':'Could not read Google Drive','Không tải được dữ liệu':'Could not download data','Không lưu được dữ liệu':'Could not save data',
+    'Không tìm được thư mục Sổ xe trên Google Drive':'Could not find the Sổ xe folder on Google Drive','Không tạo được thư mục Sổ xe trên Google Drive':'Could not create the Sổ xe folder on Google Drive',
+    'Không đọc được thư mục Sổ xe trên Drive':'Could not read the Sổ xe folder on Drive','Không liệt kê được tệp trong thư mục Sổ xe':'Could not list files in the Sổ xe folder',
+    'Đã nhận dữ liệu an toàn từ Drive':'Data safely received from Drive','Phiên Google hết hạn · đang kết nối lại':'Google session expired · reconnecting',
+    'Đồng bộ thất bại · dữ liệu vẫn ở trên máy':'Sync failed · data remains on this device','Đang ngoại tuyến · chưa thể kết nối Drive':'Offline · unable to connect to Drive',
+    'Hãy kết nối Internet rồi thử lại':'Connect to the Internet and try again','Đang chờ dịch vụ Google…':'Waiting for Google services…','Dịch vụ đăng nhập Google chưa sẵn sàng':'Google sign-in service is not ready',
+    'Không thể đăng nhập Google':'Could not sign in to Google','Đã lưu trên máy · cần kết nối lại':'Saved locally · reconnection required'
+  });
 
   const DYNAMIC_PATTERNS = [
     [/⚠ ĐÃ HẾT HẠN (\d+) ngày/g, '⚠ EXPIRED $1 days ago'],
@@ -59,6 +110,28 @@
     [/⚠ SẮP HẾT HẠN — còn (\d+) ngày/g, '⚠ EXPIRING SOON — $1 days remaining'],
     [/Còn hiệu lực — còn (\d+) ngày/g, 'Valid — $1 days remaining'],
     [/CẢNH BÁO CÁC HẠN TRONG 5 NGÀY/g, 'DEADLINES WITHIN 5 DAYS'],
+    [/Đã tải dữ liệu từ Google Drive/g, 'Data loaded from Google Drive'],
+    [/Đã đồng bộ Google Drive/g, 'Google Drive synced'],
+    [/Đã tự động đồng bộ Google Drive/g, 'Google Drive synced automatically'],
+    [/Đang tự động đồng bộ…/g, 'Syncing automatically…'],
+    [/Đang đồng bộ…/g, 'Syncing…'],
+    [/Đã kết nối · đang đồng bộ…/g, 'Connected · syncing…'],
+    [/Có thay đổi mới · đang đồng bộ tiếp/g, 'New changes · continuing sync'],
+    [/Chưa kết nối Drive/g, 'Drive not connected'],
+    [/Tổng chi tháng này/g, 'Total expenses this month'],
+    [/Xăng \/ Sạc \/ Thuê pin/g, 'Fuel / Charging / Battery rental'],
+    [/Mức tiêu hao giữa hai lần đổ xăng/g, 'Fuel consumption between refuels'],
+    [/Toàn thời gian:/g, 'All time:'],
+    [/ODO giữa các kỳ Sạc xe \/ Thuê pin/g, 'Odometer between charging / battery rental entries'],
+    [/Mỗi loại được so với kỳ trước gần nhất của chính loại đó để không cộng trùng quãng đường\./g, 'Each type is compared with its own previous entry to avoid counting the same distance twice.'],
+    [/Tổng cộng chi phí các xe/g, 'Total vehicle expenses'],
+    [/Dữ liệu nằm trong ứng dụng và có thể đồng bộ Google Drive/g, 'Data is stored in the app and can be synced with Google Drive'],
+    [/Nhấn nút bên dưới và chọn tài khoản Google\. Sau lần đầu cấp quyền, ứng dụng sẽ tự đồng bộ ngay sau mỗi thay đổi\./g, 'Select the button below and choose a Google account. After the initial authorization, the app will sync automatically after every change.'],
+    [/1 lần sạc/g, '1 charging session'], [/1 kỳ thuê pin/g, '1 battery rental period'], [/1 lần/g, '1 entry'],
+    [/Xăng:/g, 'Fuel:'], [/Sạc:/g, 'Charging:'], [/Thuê pin:/g, 'Battery rental:'],
+    [/Đang tải tệp /g, 'Downloading file '], [/Không tải được tệp /g, 'Could not download file '], [/Đang đóng gói /g, 'Packaging '],
+    [/Đã tải bản sao lưu: JSON và /g, 'Backup downloaded: JSON and '], [/ tệp từ Drive/g, ' files from Drive'],
+    [/Tệp (.+) lớn hơn 15 MB\./g, 'File $1 exceeds 15 MB.'], [/ · đang tải tệp/g, ' · uploading files'], [/ · đang đồng bộ Drive/g, ' · syncing Drive'],
     [/Xe có biển số:/g, 'License plate:'],
     [/Kỳ bảo dưỡng tiếp theo/g, 'Next maintenance'],
     [/ở ODO/g, 'at odometer'],
