@@ -1,7 +1,7 @@
 const KEY='so-xe-data-v1',DIRTY_KEY='so-xe-drive-dirty-v1',DRIVE_ENABLED_KEY='so-xe-drive-enabled-v1',DRIVE_FILE='so-xe-data.json',GOOGLE_CLIENT_ID='862228353042-bboej03g9j2nnhvmcp9n4uhlp97opdoj.apps.googleusercontent.com',ODO_JUMP_WARNING_KM=1000;
 let urgentAlertShown=false;
 const today=()=>new Date().toISOString().slice(0,10), uid=()=>crypto.randomUUID?.()||Date.now()+'-'+Math.random();
-const money=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' đ';
+const money=n=>new Intl.NumberFormat(window.SoXeI18n?.locale()||'vi-VN').format(Number(n||0))+' ₫';
 const formatDateInput=s=>{if(!s)return'';const [y,m,d]=String(s).split('-');return y&&m&&d?`${d}/${m}/${y}`:''};
 const dateVN=formatDateInput;
 function parseDateInput(value){const match=String(value||'').trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(!match)return'';const day=+match[1],month=+match[2],year=+match[3],date=new Date(Date.UTC(year,month-1,day));if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)return'';return `${match[3]}-${match[2]}-${match[1]}`}
