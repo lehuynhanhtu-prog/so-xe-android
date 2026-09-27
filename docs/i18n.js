@@ -36,8 +36,66 @@
     'Cho phép trình duyệt cài ứng dụng nếu được yêu cầu.':'Allow your browser to install the app if prompted.','Cài đè phiên bản cũ để giữ dữ liệu.':'Install over the existing version to retain your data.',
     'Cài Sổ Xe dưới dạng ứng dụng web toàn màn hình trên iPhone hoặc iPad.':'Install Sổ Xe as a full-screen web app on iPhone or iPad.',
     'Mở trang này bằng Safari và tải tệp cấu hình.':'Open this page in Safari and download the configuration profile.','Vào Cài đặt → Đã tải về hồ sơ → Cài đặt.':'Go to Settings → Profile Downloaded → Install.',
-    'Mở Sổ Xe từ Màn hình chính và kết nối Google Drive.':'Open Sổ Xe from the Home Screen and connect Google Drive.','☁ Dữ liệu dùng chung an toàn':'☁ Secure shared data'
+    'Mở Sổ Xe từ Màn hình chính và kết nối Google Drive.':'Open Sổ Xe from the Home Screen and connect Google Drive.','☁ Dữ liệu dùng chung an toàn':'☁ Secure shared data',
+    'Ngày hiệu lực *':'Effective date *','Ngày hết hạn *':'Expiry date *','Loại chi phí':'Expense type','Ghi chú':'Notes','Tệp đính kèm':'Attachments',
+    'Đơn giá/lít':'Price/litre','Số lít':'Litres','Pin trước khi sạc':'Battery before charging','Pin sau khi sạc':'Battery after charging','Mức pin đã sạc':'Battery charged',
+    'Chu kỳ km':'Distance interval','Chu kỳ thời gian':'Time interval','Tổng chi phí':'Total expenses','Chi phí theo tháng':'Monthly expenses','Tháng':'Month',
+    'ODO cuối kỳ':'Ending odometer','ODO giữa 2 kỳ':'Distance between entries','Lần trước':'Previous entry','Lần sau':'Next entry','Quãng đường':'Distance',
+    'Kỳ trước':'Previous entry','Kỳ sau':'Next entry','ODO chênh lệch':'Odometer difference','Giấy chủ quyền':'Ownership document','Sửa xe':'Edit vehicle','Xóa xe':'Delete vehicle',
+    'Không có tệp đính kèm':'No attachments','Tệp đã lưu trên Google Drive':'Files saved on Google Drive','Hãy thêm xe trước':'Add a vehicle first',
+    'Chưa nhập đơn vị bảo hiểm':'Insurance provider not entered','Chưa có thông tin bảo hiểm TNDS. Hãy nhập khoản bảo hiểm cho xe.':'No liability insurance information. Add an insurance expense for the vehicle.',
+    'Chưa có thông tin đăng kiểm hoặc phí đường bộ. Hãy nhập khoản chi tương ứng cho xe.':'No inspection or road-use fee information. Add the corresponding expense.',
+    'Chưa có chu kỳ bảo dưỡng. Hãy nhập chi phí bảo dưỡng kèm chu kỳ km và số tháng.':'No maintenance schedule. Add a maintenance expense with distance and time intervals.',
+    'Chưa có xe để hiển thị':'No vehicles to display','Chưa có chi phí. Hãy ghi khoản đầu tiên.':'No expenses yet. Add the first expense.',
+    'Chưa có xe. Hãy thêm chiếc xe đầu tiên.':'No vehicles yet. Add your first vehicle.','Chưa có xe để lập báo cáo. Hãy thêm xe và nhập chi phí trước.':'No vehicles available for reports. Add a vehicle and its expenses first.',
+    'Xe này chưa có dữ liệu chi phí':'This vehicle has no expense data','Không tìm thấy dữ liệu':'No data found','Ô tô':'Vehicle','Bảo hiểm':'Insurance',
+    'Đơn vị bảo hiểm':'Insurance provider','Số giấy chứng nhận':'Certificate number','Đơn vị đăng kiểm':'Inspection centre','Số tem/giấy đăng kiểm':'Inspection certificate number',
+    'Đơn vị thu phí':'Fee collection agency','Số biên lai/tem phí':'Receipt/sticker number','Số hợp đồng/chứng nhận':'Policy/certificate number'
   };
+
+  const DYNAMIC_PATTERNS = [
+    [/⚠ ĐÃ HẾT HẠN (\d+) ngày/g, '⚠ EXPIRED $1 days ago'],
+    [/⚠ HẾT HẠN HÔM NAY/g, '⚠ EXPIRES TODAY'],
+    [/⚠ SẮP HẾT HẠN — còn (\d+) ngày/g, '⚠ EXPIRING SOON — $1 days remaining'],
+    [/Còn hiệu lực — còn (\d+) ngày/g, 'Valid — $1 days remaining'],
+    [/CẢNH BÁO CÁC HẠN TRONG 5 NGÀY/g, 'DEADLINES WITHIN 5 DAYS'],
+    [/Xe có biển số:/g, 'License plate:'],
+    [/Kỳ bảo dưỡng tiếp theo/g, 'Next maintenance'],
+    [/ở ODO/g, 'at odometer'],
+    [/Nội dung:/g, 'Description:'],
+    [/ — đến ngày /g, ' — until '],
+    [/đã đến\/vượt ODO/g, 'odometer reached/exceeded'],
+    [/đã vượt ([\d.,]+) km/g, 'exceeded by $1 km'],
+    [/còn ([\d.,]+) km/g, '$1 km remaining'],
+    [/quá (\d+) ngày/g, '$1 days overdue'],
+    [/còn (\d+) ngày/g, '$1 days remaining'],
+    [/đến ngày /g, 'due on '],
+    [/\(hạn /g, '(expires '],
+    [/ hoặc /g, ' or '],
+    [/ \(tùy ĐK nào đến trước\)/g, ' (whichever comes first)'],
+    [/Bảo hiểm TNDS/g, 'Liability insurance'],
+    [/Bảo dưỡng/g, 'Maintenance'],
+    [/Đăng kiểm/g, 'Vehicle inspection'],
+    [/Phí đường bộ/g, 'Road-use fee'],
+    [/Đổ xăng/g, 'Refueling'],
+    [/Sạc xe/g, 'Charging'],
+    [/Thuê pin/g, 'Battery rental'],
+    [/Phụ tùng/g, 'Parts'],
+    [/Chi phí khác/g, 'Other expense'],
+    [/Số: /g, 'No.: '],
+    [/Chưa nhập /g, 'Not entered: '],
+    [/ ngày/g, ' days'],
+    [/ tháng/g, ' months'],
+    [/ lít/g, ' litres'],
+    [/ lần sạc/g, ' charging sessions'],
+    [/ kỳ thuê pin/g, ' battery rental periods'],
+    [/ lần/g, ' entries'],
+    [/TỔNG XE /g, 'VEHICLE TOTAL '],
+    [/Tháng (\d{1,2}\/\d{4})/g, 'Month $1'],
+    [/từ (\d{2}\/\d{2}\/\d{4}) đến (\d{2}\/\d{2}\/\d{4})/g, 'from $1 to $2'],
+    [/ngày (\d{2}\/\d{2}\/\d{4})/g, 'date $1'],
+    [/tiếp theo /g, 'next ']
+  ];
 
   let language = localStorage.getItem(STORAGE_KEY) || 'vi';
   const textState = new WeakMap();
@@ -57,7 +115,9 @@
       [/^Tải Windows Portable ([\d.]+) \(\.zip\)$/, 'Download Windows Portable $1 (.zip)'], [/^Tải Sổ Xe Android ([\d.]+)$/, 'Download Sổ Xe Android $1']
     ];
     for (const [re, replacement] of patterns) if (re.test(body)) return lead + body.replace(re, replacement) + tail;
-    return value;
+    let translated = body;
+    DYNAMIC_PATTERNS.forEach(([re, replacement]) => { translated = translated.replace(re, replacement); });
+    return lead + translated + tail;
   }
 
   function translateText(node) {
@@ -90,7 +150,7 @@
     applying = true;
     const visit = node => {
       if (node.nodeType === Node.TEXT_NODE) return translateText(node);
-      if (node.nodeType !== Node.ELEMENT_NODE || ['SCRIPT','STYLE','CODE'].includes(node.tagName)) return;
+      if (node.nodeType !== Node.ELEMENT_NODE || ['SCRIPT','STYLE','CODE'].includes(node.tagName) || node.hasAttribute('data-i18n-skip')) return;
       translateAttrs(node);
       node.childNodes.forEach(visit);
     };
