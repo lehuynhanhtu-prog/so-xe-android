@@ -8,8 +8,8 @@ android {
         applicationId 'vn.soxe.app'
         minSdk 24
         targetSdk 36
-        versionCode 24
-        versionName '2.0.19'
+        versionCode 25
+        versionName '2.0.20'
     }
 
     signingConfigs {
