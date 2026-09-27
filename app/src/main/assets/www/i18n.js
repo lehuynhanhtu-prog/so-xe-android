@@ -1,8 +1,9 @@
 (() => {
   'use strict';
   const STORAGE_KEY = 'so-xe-language-v1';
+  const ORIGINAL_TITLE = document.title;
   const EN = {
-    'Chi phí ô tô':'Vehicle expenses','Tổng quan':'Overview','Chi phí':'Expenses','Báo cáo':'Reports','Xe của tôi':'My vehicles','Cài đặt':'Settings',
+    'Sổ Xe — Quản lý chi phí ô tô':'Sổ Xe — Vehicle expense management','Chi phí ô tô':'Vehicle expenses','Tổng quan':'Overview','Chi phí':'Expenses','Báo cáo':'Reports','Xe của tôi':'My vehicles','Cài đặt':'Settings',
     '● Chưa kết nối Drive':'● Drive not connected','Đồng bộ ngay':'Sync now','Tổng quan chi phí':'Expense overview','Tình hình xe trong tháng này':'Vehicle activity this month',
     '+ Thêm xe':'+ Add vehicle','+ Ghi chi phí':'+ Add expense','Chi phí và ODO từng xe trong tháng này':'Monthly expenses and odometer by vehicle',
     'Biển số':'License plate','Tên xe':'Vehicle name','Loại xe':'Vehicle type','Chi phí tháng này':'This month','ODO hiện tại':'Current odometer','Tổng cộng chi phí các xe':'Total vehicle expenses',
@@ -74,6 +75,16 @@
   };
 
   Object.assign(EN, {
+    '← Quay lại Sổ Xe':'← Back to Sổ Xe','Biểu tượng Sổ Xe':'Sổ Xe icon',
+    'Mở thư mục đã giải nén, chạy':'Open the extracted folder and run',
+    'Nếu ứng dụng báo phiên bản cũ đang chạy, đóng':'If the app reports that an older version is running, close',
+    'trong Task Manager rồi mở lại. Nên đồng bộ Google Drive trước khi cập nhật.':'in Task Manager, then reopen the app. Sync Google Drive before updating.',
+    'Nên đồng bộ Google Drive hoặc tạo bản sao lưu đầy đủ trước khi cập nhật. Nếu không tải được, mở':'Sync Google Drive or create a complete backup before updating. If the download fails, open the',
+    'trang phát hành dự phòng':'fallback release page','Tải tệp cài Sổ Xe cho iPhone / iPad (.mobileconfig)':'Download Sổ Xe for iPhone / iPad (.mobileconfig)',
+    'Vào':'Go to','Cài đặt → Đã tải về hồ sơ → Cài đặt':'Settings → Profile Downloaded → Install',
+    'Tệp này chỉ cài biểu tượng ứng dụng web, không phải tệp IPA native; không cần tài khoản Apple Developer. Nếu muốn cài không qua hồ sơ, hãy':'This installs a web app icon, not a native IPA; no Apple Developer account is required. To install without a profile,',
+    'mở Sổ Xe bằng Safari':'open Sổ Xe in Safari','rồi chọn Chia sẻ → Thêm vào Màn hình chính.':'then select Share → Add to Home Screen.',
+    'Sau khi cài, hãy kết nối đúng tài khoản Google trong Sổ Xe. Chờ trạng thái “Đã đồng bộ Google Drive” trước khi đóng ứng dụng.':'After installation, connect the correct Google account in Sổ Xe. Wait for “Google Drive synced” before closing the app.',
     'Có thay đổi chưa đồng bộ':'Unsynced changes','Đã lưu ngoại tuyến · chờ có mạng':'Saved offline · waiting for connection',
     'Đã lưu trên máy. Sẽ tự đồng bộ khi có mạng':'Saved locally · will sync when online','Đã lưu trên máy · đang kết nối Drive':'Saved locally · connecting to Drive',
     'Đã lưu trên máy · chưa kết nối Drive':'Saved locally · Drive not connected','Đã lưu trên máy. Hãy kết nối Google Drive một lần':'Saved locally · connect Google Drive once to enable sync',
@@ -229,6 +240,7 @@
     };
     visit(root);
     document.documentElement.lang = language;
+    if (ORIGINAL_TITLE) document.title = language === 'en' ? translate(ORIGINAL_TITLE) : ORIGINAL_TITLE;
     const select = document.getElementById('languageSelect');
     if (select && select.value !== language) select.value = language;
     applying = false;
