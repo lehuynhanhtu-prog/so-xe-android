@@ -12,7 +12,7 @@ function seed(){return {version:1,updatedAt:new Date().toISOString(),cars:[],exp
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||seed()}catch{return seed()}}
 function persist(mark=true){data.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(data));if(mark){dirty=true;localStorage.setItem(DIRTY_KEY,'1');setSync('Có thay đổi chưa đồng bộ')}}
 function toast(s){const e=document.querySelector('#toast');e.textContent=s;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2400)}
-function setSync(s,ok=false){document.querySelectorAll('#syncState,#mobileSyncState').forEach(e=>{e.textContent=(ok?'● ':'○ ')+s;const mobile=e.id==='mobileSyncState';e.style.color=mobile?(ok?'#1f5a43':'#9a5b00'):(ok?'#bde7c9':'#f1d99d')})}
+function setSync(s,ok=false){document.querySelectorAll('#syncState,#mobileSyncState').forEach(e=>{e.textContent=(ok?'● ':'○ ')+(window.tr?window.tr(s):s);const mobile=e.id==='mobileSyncState';e.style.color=mobile?(ok?'#1f5a43':'#9a5b00'):(ok?'#bde7c9':'#f1d99d')})}
 function autoSyncNow(){requestNativeSync(false)}
 function car(id){return data.cars.find(x=>x.id===id)}
 function isElectric(c){return c?.powerType==='electric'}
