@@ -76,6 +76,7 @@ public class MainActivity extends ComponentActivity {
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
     private String exportJson;
+    private String exportExcelContent;
     private String exportBackupJson;
     private volatile String currentAccessToken;
     private String attachmentFolderId;
@@ -84,6 +85,7 @@ public class MainActivity extends ComponentActivity {
     private ActivityResultLauncher<IntentSenderRequest> authorizationLauncher;
     private ActivityResultLauncher<Intent> fileChooserLauncher;
     private ActivityResultLauncher<String> exportLauncher;
+    private ActivityResultLauncher<String> excelExportLauncher;
     private ActivityResultLauncher<String> backupLauncher;
     private ActivityResultLauncher<String[]> restoreLauncher;
 
@@ -149,6 +151,25 @@ public class MainActivity extends ComponentActivity {
                             runJs("window.nativeExportResult(true)");
                         } catch (Exception error) {
                             runJs("window.nativeExportResult(false)");
+                        }
+                    });
+                });
+        excelExportLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("application/vnd.ms-excel"),
+                uri -> {
+                    String content = exportExcelContent;
+                    exportExcelContent = null;
+                    if (uri == null || content == null) {
+                        runJs("window.nativeExcelExportResult(false)");
+                        return;
+                    }
+                    ioExecutor.execute(() -> {
+                        try (OutputStream stream = getContentResolver().openOutputStream(uri)) {
+                            if (stream == null) throw new IOException("Không mở được tệp Excel");
+                            stream.write(content.getBytes(StandardCharsets.UTF_8));
+                            runJs("window.nativeExcelExportResult(true)");
+                        } catch (Exception error) {
+                            runJs("window.nativeExcelExportResult(false)");
                         }
                     });
                 });
@@ -320,6 +341,14 @@ public class MainActivity extends ComponentActivity {
         }
 
         @JavascriptInterface
+        public void exportExcel(String xml, String fileName) {
+            runOnUiThread(() -> {
+                exportExcelContent = xml;
+                excelExportLauncher.launch(fileName == null || fileName.isEmpty() ? "so-xe-report.xls" : fileName);
+            });
+        }
+
+        @JavascriptInterface
         public boolean hasDriveToken() {
             return currentAccessToken != null && !currentAccessToken.isEmpty();
         }
@@ -380,7 +409,7 @@ public class MainActivity extends ComponentActivity {
 
         @JavascriptInterface
         public String appVersion() {
-            return "2.0.21";
+            return "2.0.22";
         }
     }
 

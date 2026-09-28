@@ -102,6 +102,12 @@ button{cursor:pointer}
 .fileinput{display:none}
 .backup-section{margin-top:8px}.backup-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}.backup-heading label{display:block;font-size:16px}.backup-heading small{display:block;color:var(--muted);margin-top:2px}.backup-safe{white-space:nowrap;padding:5px 9px;border-radius:20px;background:#e6f0eb;color:var(--green2);font-size:12px;font-weight:750}.backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.backup-panel{display:flex;flex-direction:column;gap:11px;min-width:0;padding:16px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,#fbfdfb,#f3f8f5)}.backup-panel.restore-panel{background:linear-gradient(145deg,#fffdf8,#fff8e7)}.backup-panel-title{display:flex;align-items:flex-start;gap:10px}.backup-panel-title b,.backup-panel-title small{display:block}.backup-panel-title b{font-size:15px}.backup-panel-title small{color:var(--muted);font-size:12px;margin-top:2px}.backup-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;font-size:20px;font-weight:800}.backup-icon.restore{background:#956b0b}.backup-main-action{width:100%;text-align:center}.backup-status{min-height:39px;color:var(--muted);font-size:12px}.backup-status.warning{color:#77530a}.backup-secondary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:11px;border-top:1px solid var(--line)}.backup-secondary span{color:var(--muted);font-size:12px}.backup-secondary .btn{padding:8px 10px;font-size:12px;text-align:center}
 .reportgrid{display:grid;gap:16px}
+.report-export-card{margin-bottom:18px}
+.report-export-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.report-export-head h2{margin:0 0 5px}.report-export-head p{margin:0;color:var(--muted)}
+.excel-badge{font-weight:800;letter-spacing:.08em;color:#1f6b42;background:#e7f5ec;border:1px solid #b8ddc7;border-radius:9px;padding:7px 10px}
+.report-export-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.report-export-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.report-export-note{display:block;color:var(--muted);margin-top:10px}
 .reportmetrics{margin-bottom:16px}
 .reporttable{min-width:720px}
 .reportnote{color:var(--muted);margin:-7px 0 14px}
@@ -138,6 +144,7 @@ button{cursor:pointer}
 @media(max-width:560px){.top{display:block}
 .actions{margin-top:14px}
 .grid4,.carlist,.formgrid{grid-template-columns:1fr}
+.report-export-grid{grid-template-columns:1fr 1fr}
 .field.full{grid-column:auto}
 .main{padding-left:12px;padding-right:12px}
 .nav button{font-size:0}
