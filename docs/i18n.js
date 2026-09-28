@@ -75,6 +75,15 @@
   };
 
   Object.assign(EN, {
+    'Xuất dữ liệu Excel':'Export to Excel','Lọc giao dịch hoặc xuất các bảng tổng hợp đang hiển thị.':'Filter transactions or export the displayed summary tables.',
+    'Loại chi phí':'Expense type','Từ ngày':'From date','Đến ngày':'To date','Xuất giao dịch Excel':'Export transactions to Excel','Xuất báo cáo hiển thị Excel':'Export displayed reports to Excel',
+    'Bộ lọc áp dụng cho file giao dịch. File gồm ngày, xe, loại chi phí, nội dung, ODO, số lượng và thành tiền.':'Filters apply to the transaction file. It includes date, vehicle, expense type, description, odometer, quantity and amount.',
+    'Giao dịch':'Transactions','Tổng hợp tháng':'Monthly summary','Tiêu hao nhiên liệu':'Fuel consumption','ODO sạc và thuê pin':'Charging and battery rental odometer',
+    'ODO trước':'Previous odometer','ODO sau':'Next odometer','Số chứng nhận / biên lai':'Certificate / receipt number','Số tệp đính kèm':'Attachment count',
+    'Số lượng / kỳ hạn':'Quantity / expiry','Đơn vị':'Provider','Đã tạo file Excel giao dịch':'Transaction Excel file created','Đã tạo file Excel báo cáo':'Report Excel file created',
+    'Không có giao dịch phù hợp để xuất':'No matching transactions to export','Không có xe phù hợp để xuất báo cáo':'No matching vehicles to export',
+    'Từ ngày phải nhập đúng dạng dd/mm/yyyy.':'From date must use dd/mm/yyyy format.','Đến ngày phải nhập đúng dạng dd/mm/yyyy.':'To date must use dd/mm/yyyy format.',
+    'Từ ngày không được sau Đến ngày.':'From date cannot be later than To date.','Đã lưu file Excel':'Excel file saved','Chưa lưu file Excel':'Excel file was not saved',
     '← Quay lại Sổ Xe':'← Back to Sổ Xe','Biểu tượng Sổ Xe':'Sổ Xe icon',
     'Mở thư mục đã giải nén, chạy':'Open the extracted folder and run',
     'Nếu ứng dụng báo phiên bản cũ đang chạy, đóng':'If the app reports that an older version is running, close',
