@@ -77,7 +77,7 @@
   Object.assign(EN, {
     'Xuất dữ liệu Excel':'Export to Excel','Lọc giao dịch hoặc xuất các bảng tổng hợp đang hiển thị.':'Filter transactions or export the displayed summary tables.',
     'Loại chi phí':'Expense type','Từ ngày':'From date','Đến ngày':'To date','Xuất giao dịch Excel':'Export transactions to Excel','Xuất báo cáo hiển thị Excel':'Export displayed reports to Excel',
-    'Bộ lọc áp dụng cho file giao dịch. File gồm ngày, xe, loại chi phí, nội dung, ODO, số lượng và thành tiền.':'Filters apply to the transaction file. It includes date, vehicle, expense type, description, odometer, quantity and amount.',
+    'Bộ lọc áp dụng cho cả file giao dịch và báo cáo. File giao dịch gồm ngày, xe, loại chi phí, nội dung, ODO, số lượng và thành tiền.':'Filters apply to both transaction and report files. Transaction files include date, vehicle, expense type, description, odometer, quantity and amount.',
     'Giao dịch':'Transactions','Tổng hợp tháng':'Monthly summary','Tiêu hao nhiên liệu':'Fuel consumption','ODO sạc và thuê pin':'Charging and battery rental odometer',
     'ODO trước':'Previous odometer','ODO sau':'Next odometer','Số chứng nhận / biên lai':'Certificate / receipt number','Số tệp đính kèm':'Attachment count',
     'Số lượng / kỳ hạn':'Quantity / expiry','Đơn vị':'Provider','Đã tạo file Excel giao dịch':'Transaction Excel file created','Đã tạo file Excel báo cáo':'Report Excel file created',
