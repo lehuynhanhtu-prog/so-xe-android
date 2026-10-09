@@ -75,6 +75,7 @@
   };
 
   Object.assign(EN, {
+    'Vui lòng chọn ngày hợp lệ.':'Please select a valid date.','Vui lòng chọn Từ ngày hợp lệ.':'Please select a valid start date.','Vui lòng chọn Đến ngày hợp lệ.':'Please select a valid end date.',
     'Xuất dữ liệu Excel':'Export to Excel','Lọc giao dịch hoặc xuất các bảng tổng hợp đang hiển thị.':'Filter transactions or export the displayed summary tables.',
     'Loại chi phí':'Expense type','Từ ngày':'From date','Đến ngày':'To date','Xuất giao dịch Excel':'Export transactions to Excel','Xuất báo cáo hiển thị Excel':'Export displayed reports to Excel',
     'Bộ lọc áp dụng cho cả file giao dịch và báo cáo. File giao dịch gồm ngày, xe, loại chi phí, nội dung, ODO, số lượng và thành tiền.':'Filters apply to both transaction and report files. Transaction files include date, vehicle, expense type, description, odometer, quantity and amount.',

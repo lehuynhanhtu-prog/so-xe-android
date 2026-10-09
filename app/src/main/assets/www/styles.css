@@ -255,3 +255,7 @@ button{cursor:pointer}
  #transactions tr.recent-clickable td:last-child::before{display:none}#transactions tr.recent-clickable td:last-child .btn{flex:1}
  .recent-table tr.recent-clickable td:last-child{grid-column:1/-1;font-size:19px;color:var(--green)}
 }
+
+.date-picker{min-width:0;min-height:44px;color:var(--ink);color-scheme:light;cursor:pointer}
+.date-picker::-webkit-calendar-picker-indicator{cursor:pointer;padding:4px;width:20px;height:20px}
+.date-picker::-webkit-date-and-time-value{text-align:left}
