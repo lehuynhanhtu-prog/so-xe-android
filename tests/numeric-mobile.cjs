@@ -1,0 +1,21 @@
+const {JSDOM}=require('jsdom'),fs=require('fs'),assert=require('node:assert/strict');
+(async()=>{for(const folder of ['docs','app/src/main/assets/www']){
+ const dom=new JSDOM(fs.readFileSync(folder+'/index.html','utf8'),{url:'https://soxe.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
+ w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','')};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open')};w.alert=msg=>{throw Error('Unexpected alert '+msg)};w.confirm=()=>true;w.URL.createObjectURL=()=>'';
+ w.localStorage.setItem('so-xe-language-v1','vi');w.localStorage.setItem('so-xe-data-v1',JSON.stringify({cars:[{id:'car1',plate:'65A-12345',name:'Test',odo:0,powerType:'fuel'}],expenses:[]}));
+ for(const f of ['i18n.js','app.js','numeric-fields.js','mobile-ui.js'])w.eval(fs.readFileSync(folder+'/'+f,'utf8'));
+ await new Promise(r=>setTimeout(r,40));w.document.querySelector('#addExpense').click();await new Promise(r=>setTimeout(r,20));
+ const input=(id,value)=>{const el=w.document.getElementById(id);el.value=value;el.dispatchEvent(new w.Event('input',{bubbles:true}));return el};
+ assert.equal(input('expenseAmount','1250000').value,'1.250.000');assert.equal(w.SoXeNumbers.read('expenseAmount'),1250000);
+ input('fuelPrice','25000');assert.equal(w.document.getElementById('fuelPrice').value,'25.000');assert.equal(w.document.getElementById('fuelLiters').value,'50,00');
+ assert.equal(input('fuelLiters','35,4').value,'35,4');assert.equal(w.document.getElementById('expenseAmount').value,'885.000');
+ assert.equal(input('fuelLiters','35.4').value,'35,4');assert.equal(w.SoXeNumbers.read('fuelLiters'),35.4);
+ w.document.getElementById('batteryFrom').disabled=false;assert.equal(input('batteryFrom','101').checkValidity(),false);input('batteryFrom','20');w.document.getElementById('batteryFrom').disabled=true;
+ assert.equal(input('fuelLiters','1,234').checkValidity(),false);input('fuelLiters','35,4');
+ input('expenseOdo','50000');w.document.getElementById('expenseDesc').value='Test save';w.document.getElementById('expenseForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+ const saved=JSON.parse(w.localStorage.getItem('so-xe-data-v1'));assert.equal(saved.expenses[0].amount,885000);assert.equal(saved.expenses[0].liters,35.4);assert.equal(saved.expenses[0].odo,50000);
+ w.editExpense(saved.expenses[0].id);await new Promise(r=>setTimeout(r,30));assert.equal(w.document.getElementById('expenseAmount').value,'885.000');
+ w.SoXeI18n.setLanguage('en');await new Promise(r=>setTimeout(r,30));assert.equal(w.document.getElementById('expenseAmount').value,'885,000');assert.equal(w.document.getElementById('fuelLiters').value,'35.4');assert.equal(w.SoXeNumbers.read('expenseAmount'),885000);
+ assert.equal(w.document.querySelector('#allRows td').dataset.label,'Date');assert.equal(w.document.querySelectorAll('.nav-label').length,5);
+ console.log(folder+': formatted input, fuel calculation, constraints, persisted numbers, edit, language switch, mobile labels PASS');dom.window.close();
+}})().catch(e=>{console.error(e);process.exit(1)});
