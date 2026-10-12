@@ -3,7 +3,8 @@
   const STORAGE_KEY = 'so-xe-language-v1';
   const ORIGINAL_TITLE = document.title;
   const EN = {
-    'Sổ Xe — Quản lý chi phí ô tô':'Sổ Xe — Vehicle expense management','Chi phí ô tô':'Vehicle expenses','Tổng quan':'Overview','Chi phí':'Expenses','Báo cáo':'Reports','Xe của tôi':'My vehicles','Cài đặt':'Settings',
+    'Sổ Xe — Quản lý chi phí ô tô':'Sổ Xe — Vehicle expense management','Chi phí ô tô':'Vehicle expenses',"Tổng cộng":"Total","Tiền xăng":"Fuel cost","Mức pin đã sạc (%)":"Battery charged (%)","Pin đã dùng giữa hai lần sạc (%)":"Battery used between charges (%)","km/1% pin":"km per 1% battery","Lít và tiền xăng tính từ lần đổ kế tiếp mốc đầu đến kỳ cuối.":"Fuel volume and cost cover the refills after the starting reference through the final entry.","km/1% pin = quãng đường giữa hai lần sạc / (pin sau lần sạc trước − pin trước lần sạc này). Mức pin đã sạc = pin sau − pin trước trong lần sạc này. Không đủ dữ liệu hợp lệ thì hiển thị —.":"km per 1% battery = distance between charges / (battery after the previous charge − battery before this charge). Battery charged = battery after − battery before this charge. Invalid or missing data is shown as —.",
+    'Tổng quan':'Overview','Chi phí':'Expenses','Báo cáo':'Reports','Xe của tôi':'My vehicles','Cài đặt':'Settings',
     '● Chưa kết nối Drive':'● Drive not connected','Đồng bộ ngay':'Sync now','Tổng quan chi phí':'Expense overview','Tình hình xe trong tháng này':'Vehicle activity this month',
     '+ Thêm xe':'+ Add vehicle','+ Ghi chi phí':'+ Add expense','Chi phí và ODO từng xe trong tháng này':'Monthly expenses and odometer by vehicle',
     'Biển số':'License plate','Tên xe':'Vehicle name','Loại xe':'Vehicle type','Chi phí tháng này':'This month','ODO hiện tại':'Current odometer','Tổng cộng chi phí các xe':'Total vehicle expenses',
