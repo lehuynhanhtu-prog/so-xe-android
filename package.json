@@ -2,7 +2,7 @@
   "name": "so-xe-checks",
   "private": true,
   "scripts": {
-    "test": "node tests/report-filters.cjs && node tests/numeric-mobile.cjs && node tests/date-picker.cjs"
+    "test": "node tests/report-filters.cjs && node tests/numeric-mobile.cjs && node tests/date-picker.cjs && node tests/android-drive.cjs"
   },
   "devDependencies": {
     "jsdom": "30.1.2"
