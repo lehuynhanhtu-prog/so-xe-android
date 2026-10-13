@@ -12,6 +12,8 @@ android {
         versionName '2.0.27'
     }
 
+    buildFeatures { buildConfig true }
+
     signingConfigs {
         release {
             storeFile rootProject.file('so-xe-release.jks')
